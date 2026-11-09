@@ -590,3 +590,12 @@ a { color: inherit; }
 .pwa-footnote{display:block;margin-top:15px;color:#a0aabb;text-align:center;font-size:9px}
 @media(max-width:480px){.pwa-dialog{padding:25px 20px 19px;border-radius:19px}.pwa-dialog h2{font-size:20px}}
 @media(prefers-reduced-motion:no-preference){.pwa-dialog{animation:pwa-enter .22s ease-out}@keyframes pwa-enter{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}}
+
+/* Unified MASS SMS identity across workspace, auth, browser and mobile */
+.pro-logo{gap:10px}
+.pro-logo>img{display:block;width:38px;height:38px;flex:0 0 38px;object-fit:contain}
+.pro-logo .pro-logo-word{display:inline-flex;gap:4px;margin:0;color:#172b49;font-size:19px;font-weight:850;letter-spacing:-.8px}
+.pro-logo .pro-logo-word span{margin:0;color:#0878f9}
+.account-brand,.admin-brand{gap:4px}
+.account-brand>img,.admin-brand>img{display:block;width:36px;height:36px;object-fit:contain;margin-right:5px}
+.pwa-app-icon img{object-fit:contain}
