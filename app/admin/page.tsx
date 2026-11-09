@@ -16,7 +16,7 @@ export default function AdminPage(){
  const t=(mn:string,english:string)=>en?english:mn;
  const load=useCallback(async(q=search,p=page)=>{const r=await fetch("/api/admin/overview?q="+encodeURIComponent(q)+"&page="+p,{cache:"no-store"});if(r.status===401||r.status===403){router.replace("/login");return;}const d=await r.json();if(!r.ok)throw new Error(d.error||"Failed to load");setData(d);},[router,search,page]);
  useEffect(()=>{try{const p=JSON.parse(localStorage.getItem("mass-sms-preferences")||"{}");if(p.locale==="en")setLocale("en");}catch{}load().catch(e=>setNotice(e.message));},[load]);
- async function updateUser(user:Customer,status?:string){
+ async function updateUser(user:Customer,status?:"ACTIVE"|"SUSPENDED"){
   setBusy(user.id);setNotice("");
   const body:{packageCode?:string;creditAdjustment?:number;status?:"ACTIVE"|"SUSPENDED"}={};
   const chosen=selectedPackages[user.id];if(chosen&&chosen!==user.creditAccount?.packageCode)body.packageCode=chosen;
