@@ -20,3 +20,26 @@ export const SMS_PRICE_PER_PART_MNT = calculateRetailPrice(
   SMS_PROVIDER_COST_MNT,
   SMS_MARKUP_PERCENT
 );
+
+export type SmsPackageId = "starter" | "basic" | "standard" | "business" | "enterprise";
+
+export interface SmsCreditPackage {
+  id: SmsPackageId;
+  name: string;
+  credits: number;
+  priceMnt: number;
+  featured?: boolean;
+}
+
+/** Public catalogue. Checkout must re-read this catalogue on the server. */
+export const SMS_PACKAGES: readonly SmsCreditPackage[] = [
+  { id: "starter", name: "Starter", credits: 100, priceMnt: 16000 },
+  { id: "basic", name: "Basic", credits: 500, priceMnt: 80000 },
+  { id: "standard", name: "Standard", credits: 1000, priceMnt: 160000, featured: true },
+  { id: "business", name: "Business", credits: 5000, priceMnt: 800000 },
+  { id: "enterprise", name: "Enterprise", credits: 10000, priceMnt: 1600000 },
+] as const;
+
+export function getSmsPackage(id: string): SmsCreditPackage | undefined {
+  return SMS_PACKAGES.find((item) => item.id === id);
+}
