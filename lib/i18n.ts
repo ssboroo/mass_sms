@@ -163,7 +163,7 @@ export const messages = {
     "common.perPart": "Per segment",
     "common.help": "Need help?",
     "common.contact": "Contact support",
-    "common.providerPrivate": "Internal provider connections are never exposed to customers."
+    "common.providerPrivate": "Internal provider connections are never exposed to customers.",
 
     "packages.title": "SMS credit packages",
     "packages.subtitle": "Choose a package that fits your needs. One credit equals one SMS segment.",
