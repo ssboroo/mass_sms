@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -7,7 +8,7 @@ export async function GET(request: Request) {
   if (!admin) return NextResponse.json({ error: "Admin эрх шаардлагатай." }, { status: 403 });
   const url = new URL(request.url);
   const q = (url.searchParams.get("q") || "").trim();
-  const where = q ? { OR: [
+  const where: Prisma.UserWhereInput = q ? { OR: [
       { fullName: { contains: q, mode: "insensitive" } },
       { email: { contains: q, mode: "insensitive" } },
       { phone: { contains: q } },
