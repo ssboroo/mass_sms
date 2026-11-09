@@ -22,7 +22,7 @@ const navigation = [
 const formatMnt = (amount: number) =>
   new Intl.NumberFormat("mn-MN", { maximumFractionDigits: 0 }).format(amount);
 
-export default function Home() {
+export default function Home() {\n  const [locale, setLocale] = useState<Locale>("mn");\n  const t = (key: string) => translate(locale, key);
   const [numbers, setNumbers] = useState("99112233\n88112233\n95112233");
   const [message, setMessage] = useState("Сайн байна уу? Манай шинэ үйлчилгээний мэдээллийг хүргэж байна.");
   const [notice, setNotice] = useState("");
@@ -38,7 +38,7 @@ export default function Home() {
     const file = event.target.files?.[0];
     if (!file) return;
     if (!/\.(csv|txt)$/i.test(file.name)) {
-      setNotice("Зөвхөн CSV эсвэл TXT файл импортлох боломжтой.");
+      setNotice("t("validation.fileType")");
       return;
     }
     const reader = new FileReader();
@@ -47,7 +47,7 @@ export default function Home() {
       setFileName(file.name);
       setNotice("");
     };
-    reader.onerror = () => setNotice("Файлыг уншихад алдаа гарлаа. Дахин оролдоно уу.");
+    reader.onerror = () => setNotice("t("validation.fileRead")");
     reader.readAsText(file);
     event.target.value = "";
   }
@@ -62,7 +62,7 @@ export default function Home() {
 
         <div className="workspace-switcher">
           <span className="workspace-avatar">R</span>
-          <span className="workspace-copy"><strong>RAINY Workspace</strong><small>Үндсэн орчин</small></span>
+          <span className="workspace-copy"><strong>RAINY Workspace</strong><small>{t("dashboard.defaultWorkspace")}</small></span>
           <ChevronDown size={15} />
         </div>
 
@@ -96,11 +96,11 @@ export default function Home() {
         <div className="sidebar-spacer" />
         <div className="support-card" id="help">
           <span className="support-icon"><BookOpen size={17}/></span>
-          <strong>Тусламж хэрэгтэй юу?</strong>
-          <p>SMS үйлчилгээгээ эхлүүлэхэд манай баг тусална.</p>
-          <a href="mailto:support@masssms.mn">Бидэнтэй холбогдох <ArrowRight size={13}/></a>
+          <strong>{t("common.help")}</strong>
+          <p>{t("common.supportText")}</p>
+          <a href="mailto:support@masssms.mn">{t("common.contact")} <ArrowRight size={13}/></a>
         </div>
-        <div className="sidebar-footer"><span className="online-indicator pending-indicator"/> Тохиргоо хийгдэж байна</div>
+        <div className="sidebar-footer"><span className="online-indicator pending-indicator"/> {t("status.setup")}</div>
       </aside>
 
       <main className="main-area">
@@ -117,33 +117,33 @@ export default function Home() {
         <div className="page-content">
           <section className="welcome-row">
             <div>
-              <div className="eyebrow"><span className="eyebrow-dot"/> ТАВТАЙ МОРИЛ</div>
+              <div className="eyebrow"><span className="eyebrow-dot"/> {t("common.welcome")}</div>
               <h1>{t("dashboard.greeting")} 👋</h1>
               <p>{t("dashboard.subtitle")}</p>
             </div>
-            <div className="date-chip"><Clock3 size={15}/> Таны ажлын орчин</div>
+            <div className="date-chip"><Clock3 size={15}/> {t("dashboard.workspace")}</div>
           </section>
 
           <section className="metrics-grid" aria-label="Үндсэн үзүүлэлтүүд">
             <article className="metric-card metric-balance" id="balance">
               <div className="metric-heading"><span>{t("dashboard.balance")}</span><span className="metric-icon"><Wallet size={17}/></span></div>
               <div className="metric-value">₮0</div>
-              <div className="metric-foot"><span className="metric-foot-icon"><Plus size={12}/></span> SMS кредитээ цэнэглэх</div>
+              <div className="metric-foot"><span className="metric-foot-icon"><Plus size={12}/></span> {t("dashboard.topUp")}</div>
             </article>
             <article className="metric-card">
               <div className="metric-heading"><span>{t("dashboard.sent")}</span><span className="metric-icon"><Send size={17}/></span></div>
               <div className="metric-value">—</div>
-              <div className="metric-foot">Энэ сарын нийт илгээлт</div>
+              <div className="metric-foot">{t("dashboard.monthlySent")}</div>
             </article>
             <article className="metric-card">
               <div className="metric-heading"><span>{t("dashboard.contacts")}</span><span className="metric-icon"><Users size={17}/></span></div>
               <div className="metric-value">—</div>
-              <div className="metric-foot">Зөвшөөрөлтэй дугаар</div>
+              <div className="metric-foot">{t("dashboard.consentedContacts")}</div>
             </article>
             <article className="metric-card">
               <div className="metric-heading"><span>{t("dashboard.delivery")}</span><span className="metric-icon"><Activity size={17}/></span></div>
               <div className="metric-value">—</div>
-              <div className="metric-foot">Илгээлтийн дараа тооцно</div>
+              <div className="metric-foot">{t("dashboard.afterSending")}</div>
             </article>
           </section>
 
@@ -162,56 +162,56 @@ export default function Home() {
                 <textarea id="recipients" className="input-area recipient-input" value={numbers} onChange={e => setNumbers(e.target.value)} placeholder="99112233&#10;88112233&#10;95112233" spellCheck={false}/>
                 <div className="recipient-toolbar">
                   <div className="recipient-counts">
-                    <span className="count-valid"><Check size={13}/>{estimate.validNumbers.length} зөв</span>
-                    {estimate.invalidNumbers.length > 0 && <span className="count-invalid">{estimate.invalidNumbers.length} буруу</span>}
-                    {estimate.duplicateCount > 0 && <span className="count-muted">{estimate.duplicateCount} давхардсан</span>}
+                    <span className="count-valid"><Check size={13}/>{estimate.validNumbers.length} {t("common.valid")}</span>
+                    {estimate.invalidNumbers.length > 0 && <span className="count-invalid">{estimate.invalidNumbers.length} {t("common.invalid")}</span>}
+                    {estimate.duplicateCount > 0 && <span className="count-muted">{estimate.duplicateCount} {t("common.duplicates")}</span>}
                   </div>
                   <label className="import-button"><ArrowDownToLine size={14}/><span>{t("campaign.import")}</span><input type="file" accept=".csv,.txt,text/csv,text/plain" onChange={importFile} hidden/></label>
                 </div>
-                {fileName && <div className="file-chip"><FileText size={13}/>{fileName}<span>Импортолсон</span></div>}
+                {fileName && <div className="file-chip"><FileText size={13}/>{fileName}<span>{t("common.imported")}</span></div>}
               </div>
 
               <div className="form-section message-section">
                 <div className="field-heading"><label htmlFor="message">{t("campaign.message")}</label><span className="field-hint">{estimate.isUnicode ? "Кирилл / Unicode" : "Латин"}</span></div>
                 <textarea id="message" className="input-area message-input" value={message} onChange={e => setMessage(e.target.value)} placeholder="Илгээх мессежээ энд бичнэ үү..."/>
-                <div className="message-meta"><span>{message.length} тэмдэгт</span><span>{estimate.parts} SMS хэсэг</span><span>Хэсэг тутам {estimate.charactersPerPart} тэмдэгт</span></div>
+                <div className="message-meta"><span>{message.length} {t("common.characters")}</span><span>{estimate.parts} {t("common.parts")}</span><span>{t("common.perPart")} {estimate.charactersPerPart}</span></div>
               </div>
 
               <div className="compliance-note"><ShieldCheck size={17}/><p><strong>{t("campaign.compliance")}</strong><span>{t("campaign.complianceText")}</span></p></div>
 
-              {estimate.invalidNumbers.length > 0 && <div className="validation-note" role="status">Буруу форматтай {estimate.invalidNumbers.length} дугаарыг зассаны дараа үргэлжлүүлнэ үү.</div>}
-              {estimate.parts > 4 && <div className="validation-note" role="status">Нэг мессеж 4-өөс олон хэсэгтэй байна. Агуулгаа богиносгоно уу.</div>}
+              {estimate.invalidNumbers.length > 0 && <div className="validation-note" role="status">{t("validation.invalidNumbers")} ({estimate.invalidNumbers.length})</div>}
+              {estimate.parts > 4 && <div className="validation-note" role="status">{t("validation.tooManyParts")}</div>}
               {notice && <div className="validation-note" role="status">{notice}</div>}
 
               <div className="estimate-footer">
                 <div className="estimate-copy"><span>{t("campaign.estimate")}</span><strong>₮{formatMnt(estimated)}</strong><small>{estimate.validNumbers.length} дугаар × {estimate.parts} хэсэг × ₮{SMS_PRICE_PER_PART_MNT}</small></div>
-                <button className="primary-button" disabled={!canPrepare} onClick={() => setNotice("Кампанит ажил үүсгэх backend холболт бэлэн болмогц энэ үйлдэл идэвхжинэ.")}><Send size={15}/> {t("campaign.prepare")}</button>
+                <button className="primary-button" disabled={!canPrepare} onClick={() => setNotice("t("campaign.pending")")}><Send size={15}/> {t("campaign.prepare")}</button>
               </div>
-              <div className="composer-disclaimer">Одоогоор урьдчилсан тооцоолуур ажиллаж байна. Бодит илгээлт болон кредитийн баталгаажуулалт холбогдоогүй.</div>
+              <div className="composer-disclaimer">{t("campaign.disclaimer")}</div>
             </section>
 
             <aside className="right-rail">
               <section className="panel price-panel">
-                <div className="rail-heading"><div><div className="section-kicker">ҮНИЙН МЭДЭЭЛЭЛ</div><h2>{t("pricing.title")}</h2></div><span className="rail-icon"><Zap size={17}/></span></div>
+                <div className="rail-heading"><div><div className="section-kicker">{t("pricing.section")}</div><h2>{t("pricing.title")}</h2></div><span className="rail-icon"><Zap size={17}/></span></div>
                 <div className="price-highlight"><span>{t("pricing.unit")}</span><strong>₮{formatMnt(SMS_PRICE_PER_PART_MNT)}</strong><small>{t("pricing.estimateOnly")}</small></div>
-                <div className="price-breakdown"><div><span>Хүлээн авагч</span><strong>{estimate.validNumbers.length}</strong></div><div><span>Нэг дугаарт ногдох хэсэг</span><strong>{estimate.parts}</strong></div><div><span>Нийт SMS хэсэг</span><strong>{totalParts}</strong></div></div>
-                <div className="price-total"><span>Урьдчилсан дүн</span><strong>₮{formatMnt(estimated)}</strong></div>
+                <div className="price-breakdown"><div><span>{t("pricing.recipients")}</span><strong>{estimate.validNumbers.length}</strong></div><div><span>{t("pricing.segmentsPerRecipient")}</span><strong>{estimate.parts}</strong></div><div><span>{t("pricing.totalSegments")}</span><strong>{totalParts}</strong></div></div>
+                <div className="price-total"><span>{t("pricing.total")}</span><strong>₮{formatMnt(estimated)}</strong></div>
               </section>
 
               <section className="panel connection-panel">
-                <div className="rail-heading"><div><div className="section-kicker">ҮЙЛЧИЛГЭЭНИЙ ТӨЛӨВ</div><h2>Системийн холболт</h2></div><span className="rail-icon"><Smartphone size={17}/></span></div>
-                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>SMS үйлчилгээ</span><span className="status-label">Тохируулах</span></div>
-                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>Төлбөрийн үйлчилгээ</span><span className="status-label">Тохируулах</span></div>
-                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>Өгөгдлийн сан</span><span className="status-label">Шалгаж байна</span></div>
+                <div className="rail-heading"><div><div className="section-kicker">{t("system.section")}</div><h2>{t("system.title")}</h2></div><span className="rail-icon"><Smartphone size={17}/></span></div>
+                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>{t("system.sms")}</span><span className="status-label">{t("system.configure")}</span></div>
+                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>{t("system.payments")}</span><span className="status-label">{t("system.configure")}</span></div>
+                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>{t("system.database")}</span><span className="status-label">{t("system.checking")}</span></div>
               </section>
 
               <section className="quickstart-card">
-                <div className="quickstart-icon"><Zap size={17}/></div><div><strong>Эхлэхэд бэлэн үү?</strong><p>Харилцагчдаа импортлоод анхны SMS кампанит ажлаа бэлдээрэй.</p><a href="#campaign">Кампанит ажил эхлүүлэх <ArrowRight size={13}/></a></div>
+                <div className="quickstart-icon"><Zap size={17}/></div><div><strong>{t("common.ready")}</strong><p>{t("common.quickstartText")}</p><a href="#campaign">{t("common.startCampaign")} <ArrowRight size={13}/></a></div>
               </section>
             </aside>
           </div>
 
-          <footer className="main-footer"><span>© 2026 MASS SMS</span><span>Монголын бизнесүүдэд зориулсан мессежийн платформ</span><a href="mailto:support@masssms.mn">Тусламж авах</a></footer>
+          <footer className="main-footer"><span>© 2026 MASS SMS</span><span>{t("common.footer")}</span><a href="mailto:support@masssms.mn">{t("common.getHelp")}</a></footer>
         </div>
       </main>
     </div>
