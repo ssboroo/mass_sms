@@ -73,6 +73,22 @@ export const messages = {
     "common.getHelp": "Тусламж авах",
     "validation.fileType": "Зөвхөн CSV эсвэл TXT файл импортлох боломжтой.",
     "validation.fileRead": "Файлыг уншихад алдаа гарлаа. Дахин оролдоно уу.",
+
+    "packages.title": "SMS кредитийн багцууд",
+    "packages.subtitle": "Хэрэгцээндээ тохирсон багцаа сонгоорой. Нэг кредит нь нэг SMS хэсэг.",
+    "packages.credits": "SMS кредит",
+    "packages.buy": "Багц сонгох",
+    "packages.selected": "Сонгосон",
+    "packages.popular": "ТҮГЭЭМЭЛ СОНГОЛТ",
+    "packages.paymentPending": "Төлбөрийн холболт хийгдэж байна",
+    "packages.note": "Кредитийг төлбөр баталгаажсаны дараа дансанд нэмнэ. Урт мессеж олон кредит ашиглаж болно.",
+    "packages.perCredit": "Нэг кредитийн үнэ",
+    "packages.checkoutUnavailable": "Онлайн төлбөр хараахан идэвхжээгүй.",
+    "packages.starter": "Эхлэл",
+    "packages.basic": "Суурь",
+    "packages.standard": "Стандарт",
+    "packages.business": "Бизнес",
+    "packages.enterprise": "Байгууллага",
   },
   en: {
     "validation.fileRead": "The file could not be read. Please try again.",
@@ -148,6 +164,22 @@ export const messages = {
     "common.help": "Need help?",
     "common.contact": "Contact support",
     "common.providerPrivate": "Internal provider connections are never exposed to customers."
+
+    "packages.title": "SMS credit packages",
+    "packages.subtitle": "Choose a package that fits your needs. One credit equals one SMS segment.",
+    "packages.credits": "SMS credits",
+    "packages.buy": "Select package",
+    "packages.selected": "Selected",
+    "packages.popular": "MOST POPULAR",
+    "packages.paymentPending": "Payment integration in progress",
+    "packages.note": "Credits are added only after payment is verified. Longer messages may use multiple credits.",
+    "packages.perCredit": "Price per credit",
+    "packages.checkoutUnavailable": "Online checkout is not available yet.",
+    "packages.starter": "Starter",
+    "packages.basic": "Basic",
+    "packages.standard": "Standard",
+    "packages.business": "Business",
+    "packages.enterprise": "Enterprise",
   }
 } as const;
 
