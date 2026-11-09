@@ -13,9 +13,9 @@ import {
 const navigation = [
   { label: "Хянах самбар", icon: LayoutDashboard, href: "#dashboard", active: true },
   { label: "SMS илгээх", icon: Send, href: "#campaign" },
-  { label: "Харилцагчид", icon: Users, href: "#contacts" },
-  { label: "Кампанит ажил", icon: MessageSquareText, href: "#campaigns" },
-  { label: "Тайлан", icon: ChartNoAxesCombined, href: "#reports" }
+  { label: "Харилцагчид", icon: Users, href: "#contacts", disabled: true },
+  { label: "Кампанит ажил", icon: MessageSquareText, href: "#campaigns", disabled: true },
+  { label: "Тайлан", icon: ChartNoAxesCombined, href: "#reports", disabled: true }
 ];
 
 const formatMnt = (amount: number) =>
@@ -68,11 +68,17 @@ export default function Home() {
         <div className="nav-section">
           <span className="nav-caption">WORKSPACE</span>
           <nav className="side-nav" aria-label="Үндсэн цэс">
-            {navigation.map(({ label, icon: Icon, href, active }) => (
-              <a key={label} href={href} className={active ? "nav-link active" : "nav-link"}>
-                <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
-                {label === "SMS илгээх" && <span className="nav-shortcut">NEW</span>}
-              </a>
+            {navigation.map(({ label, icon: Icon, href, active, disabled }) => (
+              disabled ? (
+                <span key={label} className="nav-link nav-link-disabled" aria-disabled="true" title="Тун удахгүй">
+                  <Icon size={17} strokeWidth={1.8} /><span>{label}</span><span className="nav-coming">УДАХГҮЙ</span>
+                </span>
+              ) : (
+                <a key={label} href={href} className={active ? "nav-link active" : "nav-link"}>
+                  <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
+                  {label === "SMS илгээх" && <span className="nav-shortcut">NEW</span>}
+                </a>
+              )
             ))}
           </nav>
         </div>
@@ -81,8 +87,8 @@ export default function Home() {
           <span className="nav-caption">ТАНЫ БҮРТГЭЛ</span>
           <nav className="side-nav" aria-label="Бүртгэлийн цэс">
             <a className="nav-link" href="#balance"><Wallet size={17} strokeWidth={1.8}/><span>Төлбөр ба багц</span></a>
-            <a className="nav-link" href="#settings"><Settings2 size={17} strokeWidth={1.8}/><span>Тохиргоо</span></a>
-            <a className="nav-link" href="#help"><CircleHelp size={17} strokeWidth={1.8}/><span>Тусламжийн төв</span></a>
+            <span className="nav-link nav-link-disabled" aria-disabled="true"><Settings2 size={17} strokeWidth={1.8}/><span>Тохиргоо</span><span className="nav-coming">УДАХГҮЙ</span></span>
+            <a className="nav-link" href="mailto:support@masssms.mn"><CircleHelp size={17} strokeWidth={1.8}/><span>Тусламжийн төв</span></a>
           </nav>
         </div>
 
@@ -93,7 +99,7 @@ export default function Home() {
           <p>SMS үйлчилгээгээ эхлүүлэхэд манай баг тусална.</p>
           <a href="mailto:support@masssms.mn">Бидэнтэй холбогдох <ArrowRight size={13}/></a>
         </div>
-        <div className="sidebar-footer"><span className="online-indicator"/> Систем хэвийн ажиллаж байна</div>
+        <div className="sidebar-footer"><span className="online-indicator pending-indicator"/> Тохиргоо хийгдэж байна</div>
       </aside>
 
       <main className="main-area">
@@ -186,7 +192,7 @@ export default function Home() {
             <aside className="right-rail">
               <section className="panel price-panel">
                 <div className="rail-heading"><div><div className="section-kicker">ҮНИЙН МЭДЭЭЛЭЛ</div><h2>SMS тариф</h2></div><span className="rail-icon"><Zap size={17}/></span></div>
-                <div className="price-highlight"><span>Нэг SMS хэсгийн үнэ</span><strong>₮{formatMnt(SMS_PRICE_PER_PART_MNT)}</strong><small>НӨАТ болон бусад шимтгэл тусдаа тооцогдох эсэхийг тохируулна.</small></div>
+                <div className="price-highlight"><span>Нэг SMS хэсгийн үнэ</span><strong>₮{formatMnt(SMS_PRICE_PER_PART_MNT)}</strong><small>Мессежийн нэг хэсэг тутамд ногдох хэрэглэгчийн үнэ.</small></div>
                 <div className="price-breakdown"><div><span>Хүлээн авагч</span><strong>{estimate.validNumbers.length}</strong></div><div><span>Нэг дугаарт ногдох хэсэг</span><strong>{estimate.parts}</strong></div><div><span>Нийт SMS хэсэг</span><strong>{totalParts}</strong></div></div>
                 <div className="price-total"><span>Урьдчилсан дүн</span><strong>₮{formatMnt(estimated)}</strong></div>
               </section>
