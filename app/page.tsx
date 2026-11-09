@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { estimateSms } from "@/lib/sms";
+import { SMS_PRICE_PER_PART_MNT } from "@/lib/pricing";
 import { Activity, ArrowUpRight, BarChart3, Bell, ChevronDown, CircleHelp, FileText, LayoutDashboard, MessageSquareText, Plus, Send, Settings, ShieldCheck, Users, Wallet, Zap } from "lucide-react";
 
 const nav = [
@@ -21,7 +22,7 @@ export default function Home() {
   const invalid = estimate.invalidNumbers.length;
   const isCyrillic = estimate.isUnicode;
   const parts = estimate.parts;
-  const estimated = valid.length * parts * 80;
+  const estimated = valid.length * parts * SMS_PRICE_PER_PART_MNT;
 
   function importFile(file?: File) {
     if (!file) return;
@@ -56,20 +57,20 @@ export default function Home() {
           <textarea className="field" value={message} onChange={e=>setMessage(e.target.value)} placeholder="Илгээх мессежээ бичнэ үү..."/>
           <div className="row" style={{justifyContent:"space-between",marginTop:8}}><span className="helper">{message.length} тэмдэгт · {parts} SMS хэсэг · {isCyrillic?"Кирилл":"Латин"}</span><span className="helper">Дээд тал нь 4 хэсэг</span></div>
           <div className="notice"><ShieldCheck size={14} style={{verticalAlign:"middle",marginRight:6}}/>Зөвхөн SMS хүлээн авах зөвшөөрөл өгсөн хэрэглэгчдэд илгээнэ. Татгалзсан (STOP) дугаарууд автоматаар хасагдана. Одоогоор энэ дэлгэц урьдчилсан тооцоолол хийж байна.</div>
-          <div className="row" style={{justifyContent:"space-between",marginTop:17}}><div><div style={{fontSize:10,color:"#8a98ad"}}>Урьдчилсан өртөг</div><div style={{fontSize:21,fontWeight:800}}>₮{estimated.toLocaleString("en-US")}</div></div><button className="primary" disabled={!valid.length||!message.trim()||invalid>0||parts>4} onClick={()=>setNotice("Кампанит ажил илгээх backend болон төлбөрийн баталгаажуулалт холбогдсоны дараа идэвхжинэ.")}><Send size={14} style={{verticalAlign:"middle",marginRight:7}}/>Илгээлт бэлтгэх</button></div>
+          <div className="row" style={{justifyContent:"space-between",marginTop:17}}><div><div style={{fontSize:10,color:"#8a98ad"}}>Урьдчилсан төлбөр</div><div style={{fontSize:21,fontWeight:800}}>₮{estimated.toLocaleString("en-US")}</div></div><button className="primary" disabled={!valid.length||!message.trim()||invalid>0||parts>4} onClick={()=>setNotice("Кампанит ажил илгээх backend болон төлбөрийн баталгаажуулалт холбогдсоны дараа идэвхжинэ.")}><Send size={14} style={{verticalAlign:"middle",marginRight:7}}/>Илгээлт бэлтгэх</button></div>
           {notice&&<div className="notice" role="status">{notice}</div>}
         </section>
         <div style={{display:"grid",gap:16,alignContent:"start"}}>
           <section className="card"><div className="card-head"><h2 className="card-title">Холболтын төлөв</h2><span className="pill">INTEGRATIONS</span></div><div className="activity">
-            <div className="activity-item"><span><span className="dot" style={{background:"#e8a23a"}}/>WeSend SMS API</span><b className="muted">Түлхүүр хүлээж байна</b></div>
-            <div className="activity-item"><span><span className="dot" style={{background:"#e8a23a"}}/>Wire төлбөр</span><b className="muted">Түлхүүр хүлээж байна</b></div>
+            <div className="activity-item"><span><span className="dot" style={{background:"#e8a23a"}}/>SMS илгээлтийн систем</span><b className="muted">Түлхүүр хүлээж байна</b></div>
+            <div className="activity-item"><span><span className="dot" style={{background:"#e8a23a"}}/>Төлбөрийн систем</span><b className="muted">Түлхүүр хүлээж байна</b></div>
             <div className="activity-item"><span><span className="dot" style={{background:"#e8a23a"}}/>Өгөгдлийн сан</span><b className="muted">Тохируулах</b></div>
           </div></section>
-          <section className="card"><div className="card-head"><h2 className="card-title">SMS тооцоолуур</h2><Zap size={17} color="#246bfe"/></div><div style={{fontSize:12,color:"#61718a",lineHeight:1.8}}>Кирилл, эможи агуулсан мессеж 65 тэмдэгтээр, латин мессеж 155 тэмдэгтээр хэсэгт хуваагдана.</div><div style={{display:"flex",justifyContent:"space-between",paddingTop:14,marginTop:14,borderTop:"1px solid #edf0f5",fontSize:11}}><span className="muted">Одоогийн тооцоо</span><b>{valid.length} × {parts} × ₮80</b></div></section>
+          <section className="card"><div className="card-head"><h2 className="card-title">SMS тооцоолуур</h2><Zap size={17} color="#246bfe"/></div><div style={{fontSize:12,color:"#61718a",lineHeight:1.8}}>Кирилл, эможи агуулсан мессеж 65 тэмдэгтээр, латин мессеж 155 тэмдэгтээр хэсэгт хуваагдана.</div><div style={{display:"flex",justifyContent:"space-between",paddingTop:14,marginTop:14,borderTop:"1px solid #edf0f5",fontSize:11}}><span className="muted">Одоогийн тооцоо</span><b>{valid.length} × {parts} × ₮{SMS_PRICE_PER_PART_MNT}</b></div></section>
           <section className="card"><div className="card-head"><h2 className="card-title">Түргэн үйлдэл</h2><Plus size={16}/></div><div className="activity"><div className="activity-item"><span>Харилцагч импортлох</span><ArrowUpRight size={14}/></div><div className="activity-item"><span>SMS багц цэнэглэх</span><ArrowUpRight size={14}/></div><div className="activity-item"><span>Илгээлтийн тайлан</span><ArrowUpRight size={14}/></div></div></section>
         </div>
       </div>
-      <div className="footer">© 2026 Mass SMS · Powered by WeSend & Wire · Монголд зориулсан SMS платформ</div>
+      <div className="footer">© 2026 Mass SMS · Монголд зориулсан SMS платформ</div>
     </main>
   </div>;
 }
