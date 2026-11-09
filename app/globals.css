@@ -563,3 +563,8 @@ a { color: inherit; }
 
 .pro-account-link{width:30px;height:30px;display:grid;place-items:center;border:1px solid #e2e8f0;border-radius:8px;background:#fff;color:#64748b;cursor:pointer}
 .pro-shell[data-theme="dark"] .pro-account-link{border-color:#34465f;background:#17263c;color:#e5edf8}
+
+.admin-table-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.admin-table-foot>div{display:flex;gap:6px}
+.admin-table-foot button{height:28px;padding:0 10px;border:1px solid #e0e7ef;border-radius:6px;background:#fff;color:#53657c;font-size:10px;font-weight:700;cursor:pointer}
+.admin-table-foot button:disabled{opacity:.4;cursor:not-allowed}
