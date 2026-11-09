@@ -1,98 +1,43 @@
 "use client";
-import { ChangeEvent, useMemo, useState } from "react";
-import { estimateSms } from "@/lib/sms";
-import { SMS_PACKAGES, SMS_PRICE_PER_PART_MNT, type SmsPackageId } from "@/lib/pricing";
-import { translate, type Locale } from "@/lib/i18n";
-import { ArrowDownToLine, Check, Send, ShieldCheck, Wallet, Zap } from "lucide-react";
 
-const money = (n: number) => new Intl.NumberFormat("mn-MN").format(n);
+import { useMemo, useState } from "react";
+import { Activity, ArrowDownToLine, ArrowUpRight, BarChart3, Bell, Check, ChevronDown, CircleHelp, FileText, Filter, LayoutDashboard, MessageSquareText, MoreHorizontal, Plus, Search, Send, ShieldCheck, Sparkles, Users, Wallet, X } from "lucide-react";
+import { SMS_PACKAGES } from "@/lib/pricing";
 
-export default function Home() {
-  const [locale, setLocale] = useState<Locale>("mn");
-  const t = (key: string) => translate(locale, key);
-  const [numbers, setNumbers] = useState("99112233\n88112233\n95112233");
-  const [message, setMessage] = useState("Сайн байна уу? Манай шинэ үйлчилгээний мэдээллийг хүргэж байна.");
-  const [notice, setNotice] = useState("");
-  const [selectedPackage, setSelectedPackage] = useState<SmsPackageId>("standard");
-  const [fileName, setFileName] = useState("");
-  const estimate = useMemo(() => estimateSms(numbers, message), [numbers, message]);
-  const totalParts = estimate.validNumbers.length * estimate.parts;
-  const canPrepare = totalParts > 0 && message.trim().length > 0 && estimate.invalidNumbers.length === 0 && estimate.parts <= 4;
+type Tab = "overview" | "campaigns" | "compose" | "templates" | "contacts" | "reports";
+type Template = { id: number; name: string; category: string; body: string };
+const starterTemplates: Template[] = [
+ {id:1,name:"Захиалга баталгаажуулах",category:"Үйлчилгээ",body:"Сайн байна уу, {{name}}. Таны захиалга амжилттай баталгаажлаа. Дэлгэрэнгүй: {{link}}"},
+ {id:2,name:"Төлбөрийн сануулга",category:"Төлбөр",body:"Сайн байна уу, {{name}}. Таны төлбөрийн хугацаа {{date}}-нд дуусна. Төлбөр төлөх: {{link}}"},
+ {id:3,name:"Шинэ бүтээгдэхүүний мэдээ",category:"Маркетинг",body:"{{name}}, танд зориулсан шинэ санал бэлэн боллоо. Дэлгэрэнгүй: {{link}}"},
+ {id:4,name:"Цагийн сануулга",category:"Үйлчилгээ",body:"Сайн байна уу, {{name}}. Таны цаг {{date}}-ны {{time}} цагт товлогдсон."}
+];
+const demoCampaigns = [
+ {id:"CMP-1048",name:"11 сарын шинэ санал",date:"2026.11.08 14:32",recipients:1240,delivered:1187,failed:18,status:"DELIVERED"},
+ {id:"CMP-1047",name:"Захиалгын сануулга",date:"2026.11.07 10:15",recipients:486,delivered:472,failed:4,status:"SENDING"},
+ {id:"CMP-1046",name:"Үйлчилгээний мэдээлэл",date:"2026.11.06 16:48",recipients:3200,delivered:3091,failed:62,status:"PARTIAL"},
+ {id:"CMP-1045",name:"Хэрэглэгчийн талархал",date:"2026.11.05 09:20",recipients:850,delivered:850,failed:0,status:"DELIVERED"}
+];
+const fmt=(n:number)=>new Intl.NumberFormat("mn-MN").format(n);
 
-  function importFile(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (!/\.(csv|txt)$/i.test(file.name)) { setNotice(t("validation.fileType")); return; }
-    const reader = new FileReader();
-    reader.onload = () => { setNumbers(String(reader.result ?? "")); setFileName(file.name); setNotice(""); };
-    reader.onerror = () => setNotice(t("validation.fileRead"));
-    reader.readAsText(file);
-    event.target.value = "";
-  }
-
-  return <div className="app-shell" id="dashboard">
-    <aside className="sidebar">
-      <a className="brand" href="#dashboard"><span className="brand-symbol">m</span><span className="brand-word">mass<span>sms</span></span></a>
-      <div className="workspace-switcher"><span className="workspace-avatar">R</span><span className="workspace-copy"><strong>RAINY Workspace</strong><small>{t("dashboard.defaultWorkspace")}</small></span></div>
-      <div className="nav-section"><span className="nav-caption">{t("nav.workspace")}</span><nav className="side-nav">
-        <a className="nav-link active" href="#dashboard">{t("nav.dashboard")}</a><a className="nav-link" href="#campaign">{t("nav.send")}</a><a className="nav-link" href="#packages">{t("nav.billing")}</a>
-      </nav></div>
-      <div className="sidebar-spacer"/>
-      <div className="support-card"><strong>{t("common.help")}</strong><p>{t("common.supportText")}</p><a href="mailto:support@masssms.mn">{t("common.contact")}</a></div>
-      <div className="sidebar-footer">{t("status.setup")}</div>
-    </aside>
-    <main className="main-area">
-      <header className="topbar"><div className="breadcrumb"><strong>{t("dashboard.title")}</strong></div><div className="topbar-actions"><div className="locale-switch" role="group" aria-label="Language">
-        <button type="button" aria-pressed={locale === "mn"} onClick={() => setLocale("mn")}>MN</button><button type="button" aria-pressed={locale === "en"} onClick={() => setLocale("en")}>EN</button>
-      </div><span className="profile-name">RAINY</span></div></header>
-      <div className="page-content">
-        <section className="welcome-row"><div><div className="eyebrow">{t("common.welcome")}</div><h1>{t("dashboard.greeting")}</h1><p>{t("dashboard.subtitle")}</p></div></section>
-        <section className="metrics-grid">
-          <article className="metric-card metric-balance"><div className="metric-heading">{t("dashboard.balance")} <Wallet size={17}/></div><div className="metric-value">₮0</div><div className="metric-foot">{t("dashboard.topUp")}</div></article>
-          <article className="metric-card"><div className="metric-heading">{t("dashboard.sent")}</div><div className="metric-value">—</div><div className="metric-foot">{t("dashboard.monthlySent")}</div></article>
-          <article className="metric-card"><div className="metric-heading">{t("dashboard.contacts")}</div><div className="metric-value">—</div><div className="metric-foot">{t("dashboard.consentedContacts")}</div></article>
-          <article className="metric-card"><div className="metric-heading">{t("dashboard.delivery")}</div><div className="metric-value">—</div><div className="metric-foot">{t("dashboard.afterSending")}</div></article>
-        </section>
-        <div className="content-grid">
-          <section className="panel composer-panel" id="campaign">
-            <div className="panel-header"><div><div className="section-kicker">{t("nav.send")}</div><h2>{t("campaign.title")}</h2><p>{t("campaign.subtitle")}</p></div></div>
-            <div className="form-section"><div className="field-heading"><label htmlFor="recipients">{t("campaign.recipients")}</label><span className="field-hint">{t("campaign.recipientsHint")}</span></div>
-              <textarea id="recipients" className="input-area recipient-input" value={numbers} onChange={e => setNumbers(e.target.value)} spellCheck={false}/>
-              <div className="recipient-toolbar"><div className="recipient-counts"><span className="count-valid"><Check size={13}/>{estimate.validNumbers.length} {t("common.valid")}</span>{estimate.invalidNumbers.length > 0 && <span className="count-invalid">{estimate.invalidNumbers.length} {t("common.invalid")}</span>}</div>
-                <label className="import-button"><ArrowDownToLine size={14}/>{t("campaign.import")}<input type="file" accept=".csv,.txt,text/csv,text/plain" onChange={importFile} hidden/></label></div>
-              {fileName && <div className="file-chip">{fileName} · {t("common.imported")}</div>}
-            </div>
-            <div className="form-section message-section"><div className="field-heading"><label htmlFor="message">{t("campaign.message")}</label><span className="field-hint">{estimate.isUnicode ? "Unicode" : "GSM"}</span></div>
-              <textarea id="message" className="input-area message-input" value={message} onChange={e => setMessage(e.target.value)}/>
-              <div className="message-meta"><span>{message.length} {t("common.characters")}</span><span>{estimate.parts} {t("common.parts")}</span><span>{t("common.perPart")} {estimate.charactersPerPart}</span></div>
-            </div>
-            <div className="compliance-note"><ShieldCheck size={17}/><p><strong>{t("campaign.compliance")}</strong><span>{t("campaign.complianceText")}</span></p></div>
-            {notice && <div className="validation-note" role="status">{notice}</div>}
-            {estimate.invalidNumbers.length > 0 && <div className="validation-note">{t("validation.invalidNumbers")}</div>}
-            {estimate.parts > 4 && <div className="validation-note">{t("validation.tooManyParts")}</div>}
-            <div className="estimate-footer"><div className="estimate-copy"><span>{t("campaign.estimate")}</span><strong>₮{money(totalParts * SMS_PRICE_PER_PART_MNT)}</strong><small>{totalParts} × ₮{SMS_PRICE_PER_PART_MNT}</small></div><button className="primary-button" disabled={!canPrepare} onClick={() => setNotice(t("campaign.pending"))}><Send size={15}/>{t("campaign.prepare")}</button></div>
-            <div className="composer-disclaimer">{t("campaign.disclaimer")}</div>
-          </section>
-          <aside className="right-rail">
-            <section className="panel price-panel"><div className="rail-heading"><div><div className="section-kicker">{t("pricing.section")}</div><h2>{t("pricing.title")}</h2></div><Zap size={17}/></div>
-              <div className="price-highlight"><span>{t("pricing.unit")}</span><strong>₮{money(SMS_PRICE_PER_PART_MNT)}</strong><small>{t("pricing.estimateOnly")}</small></div>
-              <div className="price-breakdown"><div><span>{t("pricing.recipients")}</span><strong>{estimate.validNumbers.length}</strong></div><div><span>{t("pricing.totalSegments")}</span><strong>{totalParts}</strong></div></div>
-              <div className="price-total"><span>{t("pricing.total")}</span><strong>₮{money(totalParts * SMS_PRICE_PER_PART_MNT)}</strong></div>
-            </section>
-          </aside>
-        </div>
-        <section className="packages-section" id="packages">
-          <div className="packages-heading"><div><div className="section-kicker">{t("pricing.section")}</div><h2>{t("packages.title")}</h2><p>{t("packages.subtitle")}</p></div><span className="package-unit">{t("packages.perCredit")}: ₮160</span></div>
-          <div className="packages-grid">{SMS_PACKAGES.map(item => <article key={item.id} className={`package-card ${item.featured ? "package-featured" : ""} ${selectedPackage === item.id ? "package-selected" : ""}`}>
-            {item.featured && <span className="package-badge">{t("packages.popular")}</span>}
-            <h3>{t(`packages.${item.id}`)}</h3><div className="package-credits">{money(item.credits)} <small>{t("packages.credits")}</small></div>
-            <div className="package-price">₮{money(item.priceMnt)}</div><div className="package-rate">₮{money(item.priceMnt / item.credits)} / {t("packages.credits")}</div>
-            <button type="button" className={selectedPackage === item.id ? "package-button selected" : "package-button"} onClick={() => setSelectedPackage(item.id)}>{selectedPackage === item.id ? t("packages.selected") : t("packages.buy")}</button>
-          </article>)}</div>
-          <p className="packages-note">{t("packages.note")} {t("packages.checkoutUnavailable")}</p>
-        </section>
-        <footer className="main-footer"><span>© 2026 MASS SMS</span><span>{t("common.footer")}</span><a href="mailto:support@masssms.mn">{t("common.getHelp")}</a></footer>
-      </div>
-    </main>
-  </div>;
+export default function Home(){
+ const [tab,setTab]=useState<Tab>("overview"),[templates,setTemplates]=useState(starterTemplates),[message,setMessage]=useState("Сайн байна уу? Манай шинэ үйлчилгээний мэдээллийг хүргэж байна."),[templateName,setTemplateName]=useState(""),[notice,setNotice]=useState(""),[goal,setGoal]=useState("Шинэ бүтээгдэхүүний урамшуулал"),[tone,setTone]=useState("Мэргэжлийн, найрсаг"),[search,setSearch]=useState(""),[period,setPeriod]=useState("7");
+ const filtered=useMemo(()=>demoCampaigns.filter(c=>(c.name+c.id).toLowerCase().includes(search.toLowerCase())),[search]);
+ const nav:[Tab,string,typeof LayoutDashboard][]=[["overview","Ерөнхий самбар",LayoutDashboard],["campaigns","Кампанит ажил",Send],["compose","SMS илгээх",MessageSquareText],["templates","Мессежийн загвар",FileText],["contacts","Харилцагчид",Users],["reports","Тайлан, статистик",BarChart3]];
+ const heading=nav.find(x=>x[0]===tab)?.[1]??"Ерөнхий самбар";
+ const save=()=>{if(!templateName.trim()||!message.trim()){setNotice("Загварын нэр болон мессежээ оруулна уу.");return;}setTemplates(v=>[{id:Date.now(),name:templateName,category:"Миний загвар",body:message},...v]);setTemplateName("");setNotice("Загварыг demo дэлгэцийн түр жагсаалтад нэмлээ. Байнгын хадгалалт хараахан холбогдоогүй.");};
+ return <div className="pro-shell"><aside className="pro-sidebar"><a className="pro-logo" href="#" onClick={()=>setTab("overview")}><i>m</i>MASS<span>SMS</span></a><button className="pro-workspace"><b>R</b><span><strong>RAINY Workspace</strong><small>Үндсэн workspace</small></span><ChevronDown size={15}/></button><small className="pro-nav-label">WORKSPACE</small><nav>{nav.map(([id,label,Icon])=><button key={id} className={tab===id?"pro-nav active":"pro-nav"} onClick={()=>{setTab(id);setNotice("");}}><Icon size={17}/>{label}{id==="campaigns"&&<small>4</small>}</button>)}</nav><div className="pro-sidebar-bottom"><div className="pro-help"><CircleHelp size={17}/><b>Тусламж хэрэгтэй юу?</b><p>Заавар болон тусламжийн багтай холбогдоорой.</p><a href="mailto:support@masssms.mn">Тусламж авах ↗</a></div><div className="pro-user"><b>R</b><span><strong>RAINY Admin</strong><small>Workspace owner</small></span><MoreHorizontal size={17}/></div></div></aside>
+ <main className="pro-main"><header className="pro-top"><span>Workspace <i>/</i> <b>{heading}</b></span><div><label className="service-state"><i/> Үйлчилгээний төлөв</label><button aria-label="Notifications"><Bell size={17}/></button><b className="pro-avatar">R</b></div></header><div className="pro-content"><div className="pro-heading"><div><small>MASS SMS / WORKSPACE</small><h1>{heading}</h1><p>Мессежийн харилцаагаа нэг дороос удирдаж, үр дүнгээ хянаарай.</p></div><div><button className="pro-btn secondary" onClick={()=>setTab("templates")}><FileText size={15}/> Загварууд</button><button className="pro-btn primary" onClick={()=>setTab("compose")}><Plus size={16}/> Шинэ SMS илгээх</button></div></div>
+ {notice&&<div className="pro-notice" role="status">{notice}<button onClick={()=>setNotice("")}><X size={15}/></button></div>}
+ {tab==="overview"&&<><section className="pro-stats"><Stat icon={<Send/>} label="Илгээсэн SMS" value="24,680" note="↑ 12.8% өмнөх сараас" tone="blue"/><Stat icon={<Check/>} label="Амжилттай хүрсэн" value="23,914" note="96.9% хүргэлтийн хувь" tone="green"/><Stat icon={<Activity/>} label="Нийт кампанит ажил" value="38" note="↑ 6 энэ сард" tone="purple"/><Stat icon={<Wallet/>} label="Үлдэгдэл кредит" value="8,420 SMS" note="Дараагийн цэнэглэлтээ төлөвлөх" tone="amber"/></section><section className="pro-analytics"><article className="pro-card"><div className="pro-card-head"><div><h2>Илгээлтийн гүйцэтгэл</h2><p>Сүүлийн өдрүүдийн илгээлтийн хэмжээ</p></div><select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">7 хоног</option><option value="30">30 хоног</option></select></div><div className="pro-chart-legend"><span><i/> Илгээсэн</span><span><i/> Хүрсэн</span></div><div className="pro-chart"><div className="pro-y"><span>5,000</span><span>3,750</span><span>2,500</span><span>1,250</span><span>0</span></div><div className="pro-plot"><div className="pro-gridlines"><i/><i/><i/><i/><i/></div><svg viewBox="0 0 700 190" preserveAspectRatio="none" aria-label="Илгээлтийн статистик"><path d="M0 132 C42 120 60 100 100 110 S160 145 200 100 S260 70 300 88 S360 115 400 65 S460 58 500 72 S560 30 600 48 S660 18 700 26" fill="none" stroke="#4779dc" strokeWidth="3"/><path d="M0 145 C42 135 60 115 100 123 S160 154 200 114 S260 85 300 100 S360 126 400 80 S460 73 500 87 S560 46 600 62 S660 32 700 40" fill="none" stroke="#25a477" strokeWidth="2.5"/></svg><div className="pro-x"><span>11/03</span><span>11/04</span><span>11/05</span><span>11/06</span><span>11/07</span><span>11/08</span><span>11/09</span></div></div></div></article><article className="pro-card pro-delivery"><div className="pro-card-head"><div><h2>Хүргэлтийн төлөв</h2><p>Нийт илгээлтийн харьцаа</p></div><MoreHorizontal size={18}/></div><div className="pro-donut"><div><b>96.9%</b><small>Хүрсэн</small></div></div><div className="pro-legend"><span><i className="d-green"/>Амжилттай <b>23,914</b></span><span><i className="d-amber"/>Хүлээгдэж буй <b>382</b></span><span><i className="d-red"/>Амжилтгүй <b>384</b></span></div></article></section><section className="pro-card pro-table-card"><div className="pro-card-head"><div><h2>Сүүлийн кампанит ажлууд</h2><p>Илгээсэн мессежүүдийн явц, хүргэлтийн үр дүн</p></div><button className="pro-btn secondary small" onClick={()=>setTab("campaigns")}>Бүгдийг харах ↗</button></div><CampaignTable rows={demoCampaigns.slice(0,3)}/></section><p className="pro-demo-note">Жишээ өгөгдөл · Бодит хүргэлтийн статистик provider-ийн тайлан холбогдсоны дараа харагдана.</p></>}
+ {tab==="campaigns"&&<section className="pro-card pro-table-card"><div className="pro-card-head"><div><h2>Кампанит ажлын түүх</h2><p>Бүх илгээлт, хүргэлтийн төлөв болон алдааны мэдээлэл</p></div><button className="pro-btn primary" onClick={()=>setTab("compose")}><Plus size={15}/> Кампанит ажил үүсгэх</button></div><div className="pro-toolbar"><label><Search size={15}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Нэр эсвэл ID хайх"/></label><button className="pro-btn secondary small"><Filter size={14}/> Шүүлтүүр</button></div><CampaignTable rows={filtered}/></section>}
+ {tab==="compose"&&<div className="pro-compose"><section className="pro-card pro-compose-card"><div className="pro-card-head"><div><h2>Шинэ SMS кампанит ажил</h2><p>Хүлээн авагч, мессежээ тохируулж илгээлтээ бэлдэнэ.</p></div><small>АЛХАМ 1 / 3</small></div><label className="pro-field">Кампанит ажлын нэр<input placeholder="Жишээ: 11 сарын шинэ санал"/></label><label className="pro-field">Хүлээн авагчдын дугаар<textarea rows={5} placeholder={"99112233\n88112233\n95112233"}/></label><button className="pro-btn secondary small"><ArrowDownToLine size={14}/> CSV файл оруулах</button><label className="pro-field">Мессежийн агуулга<div className="pro-editor-tools"><button onClick={()=>setTab("templates")}><FileText size={14}/> Загвар сонгох</button><button onClick={()=>document.getElementById("ai-panel")?.scrollIntoView({behavior:"smooth"})}><Sparkles size={14}/> AI бичвэр</button></div><textarea rows={6} value={message} onChange={e=>setMessage(e.target.value)}/><small>{message.length} тэмдэгт · Unicode · 1 SMS хэсэг</small></label><div className="pro-compliance"><ShieldCheck size={17}/>Зөвхөн мессеж хүлээн авах зөвшөөрөл өгсөн харилцагчдад илгээнэ. STOP хүсэлтийг заавал хүндэтгэнэ.</div><button className="pro-btn primary" onClick={()=>setNotice("Илгээлтийн backend хараахан холбогдоогүй. Одоогоор бодит SMS илгээгээгүй.")}><Send size={15}/> Илгээлт бэлтгэх</button></section><aside className="pro-card pro-ai" id="ai-panel"><div className="pro-ai-title"><Sparkles size={18}/><div><h2>Мессежийн туслах</h2><p>Зорилгодоо тохирсон текстийн ноорог</p></div></div><label className="pro-field">Мессежийн зорилго<input value={goal} onChange={e=>setGoal(e.target.value)}/></label><label className="pro-field">Өнгө аяс<select value={tone} onChange={e=>setTone(e.target.value)}><option>Мэргэжлийн, найрсаг</option><option>Албан ёсны</option><option>Борлуулалтын</option><option>Товч, шууд</option><option>Дулаан, талархсан</option></select></label><label className="pro-field">Нэмэлт мэдээлэл<textarea rows={3} placeholder="Хөнгөлөлт, хугацаа, холбоос..."/></label><button className="pro-btn primary wide" onClick={()=>setNotice("AI бичвэрийн үйлчилгээ холбогдоогүй. Provider тохируулсны дараа 3 хувилбар үүсгэнэ.")}><Sparkles size={15}/> AI ноорог үүсгэх</button><p className="pro-demo-note">AI холболтын дараа олон хувилбар, богино/урт текст, зөв бичгийн шалгалт, CTA санал болгоно.</p></aside></div>}
+ {tab==="templates"&&<section className="pro-card pro-table-card"><div className="pro-card-head"><div><h2>Мессежийн загварын сан</h2><p>Дахин ашиглах текстүүдээ ангилж хадгалах</p></div><button className="pro-btn primary" onClick={()=>setTab("compose")}><Plus size={15}/> Шинэ загвар</button></div><div className="pro-template-grid">{templates.map(t=><article key={t.id} className="pro-template"><div><span>{t.category}</span><MoreHorizontal size={17}/></div><h3>{t.name}</h3><p>{t.body}</p><footer><button onClick={()=>{setMessage(t.body);setTab("compose");}}>Ашиглах</button><button onClick={()=>{setMessage(t.body);setTemplateName(t.name+" - copy");setTab("compose");}}>Хуулбарлах</button></footer></article>)}</div><div className="pro-save-template"><div><b>Одоогийн мессежийг загвар болгох</b><small>Нэр өгч дахин ашиглах жагсаалтдаа нэмнэ.</small></div><input value={templateName} onChange={e=>setTemplateName(e.target.value)} placeholder="Загварын нэр"/><button className="pro-btn primary" onClick={save}><Plus size={14}/> Хадгалах</button></div><p className="pro-demo-note">Загварууд энэ demo дэлгэцэд түр хадгалагдана. Байнгын хадгалалт database холболт шаардлагатай.</p></section>}
+ {tab==="contacts"&&<Feature title="Харилцагчийн сан" icon={<Users/>} text="Харилцагчдыг жагсаалт, шошго, бүлгээр удирдах; CSV импортлох; зөвшөөрлийн эх сурвалж, огноо болон STOP жагсаалтыг шалгах." tags={["CSV импорт","Сегмент / шошго","Зөвшөөрлийн бүртгэл","Давхардал арилгах","STOP жагсаалт"]}/>}
+ {tab==="reports"&&<div className="pro-reports"><section className="pro-card"><h2>Тайлангийн тойм</h2><p>Хүргэлтийн үр дүн, зарцуулсан кредит, кампанит ажлын харьцуулалт.</p><div className="pro-report-kpis"><b>24,680<small>Нийт илгээсэн</small></b><b>23,914<small>Амжилттай хүрсэн</small></b><b>384<small>Амжилтгүй</small></b><b>96.9%<small>Хүргэлтийн хувь</small></b></div><p className="pro-demo-note">Жишээ статистик · Provider-ийн delivery report холбогдоогүй.</p></section><section className="pro-card"><h2>Тайлан татах</h2><p>Кампанит ажлын үр дүнг CSV хэлбэрээр экспортлох.</p><button className="pro-btn secondary wide" onClick={()=>setNotice("Тайлангийн экспортын API хараахан холбогдоогүй.")}><ArrowDownToLine size={15}/> CSV тайлан татах</button></section></div>}
+ <section className="pro-billing"><div><Wallet size={19}/><span><b>SMS кредитийн багц</b><small>Ашиглалтын хэмжээндээ тохирсон багцаа сонгоно уу.</small></span></div><div>{SMS_PACKAGES.map(p=><button key={p.id} onClick={()=>setNotice("Төлбөрийн checkout холбогдоогүй.")}><b>{fmt(p.credits)}</b><small>₮{fmt(p.priceMnt)}</small></button>)}</div></section><footer className="pro-footer"><span>© 2026 MASS SMS</span><span>Найдвартай мессежийн харилцаа</span><a href="mailto:support@masssms.mn">Тусламж</a></footer>
+ </div></main></div>;
 }
+function Stat({icon,label,value,note,tone}:{icon:React.ReactNode;label:string;value:string;note:string;tone:string}){return <article className="pro-stat"><div><span>{label}</span><i className={tone}>{icon}</i></div><strong>{value}</strong><small>{note}</small></article>}
+function CampaignTable({rows}:{rows:typeof demoCampaigns}){return <div className="pro-table-wrap"><table className="pro-table"><thead><tr><th>КАМПАНИТ АЖИЛ</th><th>ОГНОО</th><th>ХҮЛЭЭН АВАГЧ</th><th>ХҮРГЭСЭН</th><th>ТӨЛӨВ</th><th/></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td><b>{r.name}</b><small>{r.id}</small></td><td>{r.date}</td><td>{fmt(r.recipients)}</td><td><b>{fmt(r.delivered)}</b><small>{Math.round(r.delivered/r.recipients*100)}% хүргэлт</small></td><td><span className={"pro-status "+(r.status==="DELIVERED"?"good":r.status==="SENDING"?"live":"warn")}>{r.status==="DELIVERED"?"Амжилттай":r.status==="SENDING"?"Илгээж байна":"Хэсэгчлэн амжилттай"}</span></td><td><MoreHorizontal size={17}/></td></tr>)}</tbody></table>{!rows.length&&<p className="pro-empty">Хайлтад тохирох кампанит ажил олдсонгүй.</p>}</div>}
+function Feature({title,icon,text,tags}:{title:string;icon:React.ReactNode;text:string;tags:string[]}){return <section className="pro-card pro-feature"><i>{icon}</i><h2>{title}</h2><p>{text}</p><div>{tags.map(t=><span key={t}>{t}</span>)}</div><small>Энэ хэсгийн өгөгдлийн сангийн API холболт хийгдээгүй.</small></section>}
