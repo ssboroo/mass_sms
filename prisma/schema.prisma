@@ -7,7 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {\n  USER\n  ADMIN\n}\n\nenum UserStatus {
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
   PENDING
   ACTIVE
   SUSPENDED
