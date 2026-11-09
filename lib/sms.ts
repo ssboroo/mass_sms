@@ -13,7 +13,7 @@ export function normalizePhone(value: string): string {
 }
 
 export function estimateSms(numbersText: string, message: string): SmsEstimate {
-  const raw = numbersText.split(/[\\s,;]+/).map(normalizePhone).filter(Boolean);
+  const raw = numbersText.split(/[\\n,;]+/).map(normalizePhone).filter(Boolean);
   const normalizedNumbers = [...new Set(raw)];
   const validNumbers = normalizedNumbers.filter((number) => /^\\d{8}$/.test(number));
   const invalidNumbers = normalizedNumbers.filter((number) => !/^\\d{8}$/.test(number));
