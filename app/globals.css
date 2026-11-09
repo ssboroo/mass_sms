@@ -129,6 +129,9 @@ a { color: inherit; }
 }
 .nav-link:hover { background: #f6f8fc; color: #263650; }
 .nav-link.active { background: var(--color-brand-soft); color: var(--color-brand); }
+.nav-link-disabled { color: #a6b0be; cursor: not-allowed; }
+.nav-coming { margin-left: auto; color: #aab4c1; font-size: 7px; font-weight: 800; letter-spacing: .4px; }
+.pending-indicator { background: #d99a3d; box-shadow: 0 0 0 3px #fff4e3; }
 .nav-link.active::before {
   position: absolute;
   left: 0;
