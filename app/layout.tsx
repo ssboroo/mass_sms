@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mass SMS — Бизнес мессежийн платформ",
-  description: "Монголын бүх оператор руу нэг дор SMS илгээх платформ."
+  title: "MASS SMS — Бизнес мессежийн платформ",
+  description: "Бизнесийн SMS илгээлт, харилцагчийн жагсаалт, тарифын тооцоог нэг дор удирдах платформ."
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
