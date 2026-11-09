@@ -13,11 +13,11 @@ export function normalizePhone(value: string): string {
 }
 
 export function estimateSms(numbersText: string, message: string): SmsEstimate {
-  const raw = numbersText.split(/[\\n,;]+/).map(normalizePhone).filter(Boolean);
+  const raw = numbersText.split(/[\n,;]+/).map(normalizePhone).filter(Boolean);
   const normalizedNumbers = [...new Set(raw)];
-  const validNumbers = normalizedNumbers.filter((number) => /^\\d{8}$/.test(number));
-  const invalidNumbers = normalizedNumbers.filter((number) => !/^\\d{8}$/.test(number));
-  const isUnicode = /[^\\x00-\\x7F]/.test(message);
+  const validNumbers = normalizedNumbers.filter((number) => /^\d{8}$/.test(number));
+  const invalidNumbers = normalizedNumbers.filter((number) => !/^\d{8}$/.test(number));
+  const isUnicode = /[^\x00-\x7F]/.test(message);
   const charactersPerPart = isUnicode ? 65 : 155;
   const parts = Math.max(1, Math.ceil(message.length / charactersPerPart));
 
