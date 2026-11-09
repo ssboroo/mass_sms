@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { estimateSms } from "@/lib/sms";
 import { Activity, ArrowUpRight, BarChart3, Bell, ChevronDown, CircleHelp, FileText, LayoutDashboard, MessageSquareText, Plus, Send, Settings, ShieldCheck, Users, Wallet, Zap } from "lucide-react";
 
 const nav = [
@@ -11,20 +12,15 @@ const nav = [
   { label: "Тайлан", icon: BarChart3 }
 ];
 
-function cleanPhone(value: string) {
-  return value.replace(/[^0-9]/g, "").replace(/^976/, "");
-}
-
 export default function Home() {
   const [numbers, setNumbers] = useState("99112233\n88112233\n95112233");
   const [message, setMessage] = useState("Сайн байна уу? Манай шинэ үйлчилгээний мэдээллийг хүргэж байна.");
   const [notice, setNotice] = useState("");
-  const recipients = useMemo(() => [...new Set(numbers.split(/[\\s,;]+/).map(cleanPhone).filter(Boolean))], [numbers]);
-  const valid = recipients.filter(n => /^\\d{8}$/.test(n));
-  const invalid = recipients.length - valid.length;
-  const isCyrillic = /[^\\x00-\\x7F]/.test(message);
-  const charsPerPart = isCyrillic ? 65 : 155;
-  const parts = Math.max(1, Math.ceil(message.length / charsPerPart));
+  const estimate = useMemo(() => estimateSms(numbers, message), [numbers, message]);
+  const valid = estimate.validNumbers;
+  const invalid = estimate.invalidNumbers.length;
+  const isCyrillic = estimate.isUnicode;
+  const parts = estimate.parts;
   const estimated = valid.length * parts * 80;
 
   function importFile(file?: File) {
