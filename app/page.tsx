@@ -71,13 +71,13 @@ export default function Home() {
           <nav className="side-nav" aria-label="Үндсэн цэс">
             {navigation.map(({ key, icon: Icon, href, active, disabled }) => (
               disabled ? (
-                <span key={label} className="nav-link nav-link-disabled" aria-disabled="true" title="Тун удахгүй">
-                  <Icon size={17} strokeWidth={1.8} /><span>{label}</span><span className="nav-coming">{t("status.comingSoon")}</span>
+                <span key={key} className="nav-link nav-link-disabled" aria-disabled="true" title={t("status.comingSoon")}>
+                  <Icon size={17} strokeWidth={1.8} /><span>{t(key)}</span><span className="nav-coming">{t("status.comingSoon")}</span>
                 </span>
               ) : (
-                <a key={label} href={href} className={active ? "nav-link active" : "nav-link"}>
-                  <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
-                  {label === "SMS илгээх" && <span className="nav-shortcut">NEW</span>}
+                <a key={key} href={href} className={active ? "nav-link active" : "nav-link"}>
+                  <Icon size={17} strokeWidth={1.8} /><span>{t(key)}</span>
+                  {key === "nav.send" && <span className="nav-shortcut">NEW</span>}
                 </a>
               )
             ))}
