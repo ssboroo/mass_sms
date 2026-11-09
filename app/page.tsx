@@ -201,7 +201,7 @@ export default function Home() {
                 <div className="rail-heading"><div><div className="section-kicker">ҮЙЛЧИЛГЭЭНИЙ ТӨЛӨВ</div><h2>Системийн холболт</h2></div><span className="rail-icon"><Smartphone size={17}/></span></div>
                 <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>SMS үйлчилгээ</span><span className="status-label">Тохируулах</span></div>
                 <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>Төлбөрийн үйлчилгээ</span><span className="status-label">Тохируулах</span></div>
-                <div className="connection-row"><span className="connection-name"><i className="status-dot status-ready"/>Өгөгдлийн сан</span><span className="status-label">Холбогдсон</span></div>
+                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>Өгөгдлийн сан</span><span className="status-label">Шалгаж байна</span></div>
               </section>
 
               <section className="quickstart-card">
