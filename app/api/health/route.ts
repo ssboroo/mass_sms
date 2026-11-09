@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 export async function GET() {
   const checkedAt = new Date().toISOString();
-  const required = ["DATABASE_URL", "SESSION_SECRET", "NEXT_PUBLIC_APP_URL"];
+  const required = ["DATABASE_URL"];
   const missingConfiguration = required.filter((key) => !process.env[key]?.trim());
 
   let database: "ok" | "error" = "error";
