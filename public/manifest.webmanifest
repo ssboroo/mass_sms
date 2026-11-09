@@ -1,0 +1,22 @@
+{
+  "id": "/",
+  "name": "MASS SMS — Business Messaging",
+  "short_name": "MASS SMS",
+  "description": "Business SMS campaigns and credit management.",
+  "lang": "mn",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#f7f9fc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/mass-sms-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
