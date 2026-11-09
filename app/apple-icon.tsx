@@ -5,13 +5,12 @@ export const contentType = "image/png";
 
 export default function AppleIcon() {
   return new ImageResponse(
-    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 42, background: "linear-gradient(145deg,#22b8ff 0%,#0878f9 48%,#1239d8 100%)", position: "relative" }}>
+    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 42, background: "linear-gradient(145deg,#27c2ff 0%,#0878f9 48%,#1538d5 100%)" }}>
       <svg width="142" height="142" viewBox="0 0 128 128">
-        <path d="M64 9C33.1 9 9 30.8 9 58.2c0 15.2 7.5 28.3 19.7 37.1L24 116l25.2-12.8c4.8 1.3 9.7 2 14.8 2 30.9 0 55-21.8 55-49.2S94.9 9 64 9Z" fill="#fff" opacity=".18"/>
-        <circle cx="43" cy="39" r="5.2" fill="#fff"/><circle cx="61" cy="39" r="5.2" fill="#fff"/><circle cx="79" cy="39" r="5.2" fill="#fff"/>
-        <path d="m34 69 72-27-25.4 62-13.1-23.2L34 69Z" fill="#fff"/>
-        <path d="m67.5 80.8 38.5-38.8-25.4 62-13.1-23.2Z" fill="#cce8ff"/>
-        <path d="m16 77 15-6M20 89l19-8" stroke="#d9f1ff" strokeWidth="5" strokeLinecap="round"/>
+        <path d="M35 12h42c25 0 40 14 40 35 0 15-8 26-22 31l23 38H85L66 83H49v33H12V36C12 21 21 12 35 12Zm14 27v18h27c8 0 13-3 13-9s-5-9-13-9H49Z" fill="#fff" opacity=".98"/>
+        <path d="m40 68 69-29-27 63-13-22-29-12Z" fill="#0878f9"/>
+        <path d="m69 80 13 22 27-63L69 80Z" fill="#b9deff"/>
+        <path d="m13 77 27-10M18 91l30-12" fill="none" stroke="#c9edff" strokeWidth="5" strokeLinecap="round"/>
       </svg>
     </div>,
     { ...size }
