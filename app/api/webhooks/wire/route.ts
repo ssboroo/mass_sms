@@ -48,12 +48,13 @@ export async function POST(request: Request) {
           throw new Error("PAYMENT_AMOUNT_MISMATCH");
         }
         if (payment.status === "PAID") return;
+        const packageCode = ({ "100": "STARTER", "500": "BASIC", "1000": "STANDARD", "5000": "BUSINESS", "10000": "ENTERPRISE" } as Record<string, string>)[payment.creditAmount.toString()] || "UNASSIGNED";
         const account = await tx.creditAccount.upsert({
           where: { userId: payment.userId },
-          update: { balance: { increment: payment.creditAmount } },
+          update: { balance: { increment: payment.creditAmount }, packageCode, packageCredits: { increment: payment.creditAmount } },
           create: {
             userId: payment.userId, balance: payment.creditAmount,
-            packageCode: "UNASSIGNED", packageCredits: 0n,
+            packageCode, packageCredits: payment.creditAmount,
           },
           select: { id: true, balance: true },
         });
@@ -79,7 +80,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   } catch (error) {
     const code = error instanceof Error ? error.message : "";
-    if (code === "P2002") return NextResponse.json({ received: true, duplicate: true });
+    if (error && typeof error === "object" && "code" in error && error.code === "P2002") return NextResponse.json({ received: true, duplicate: true });
     console.error("Wire webhook processing failed", error);
     return NextResponse.json({ error: "Webhook processing failed." }, { status: code === "PAYMENT_NOT_FOUND" ? 404 : 500 });
   }
