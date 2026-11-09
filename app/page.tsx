@@ -3,6 +3,7 @@
 import { ChangeEvent, useMemo, useState } from "react";
 import { estimateSms } from "@/lib/sms";
 import { SMS_PRICE_PER_PART_MNT } from "@/lib/pricing";
+import { translate, type Locale } from "@/lib/i18n";
 import {
   Activity, ArrowDownToLine, ArrowRight, Bell, BookOpen, ChartNoAxesCombined,
   Check, ChevronDown, CircleHelp, Clock3, FileText, LayoutDashboard,
@@ -11,11 +12,11 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { label: "Хянах самбар", icon: LayoutDashboard, href: "#dashboard", active: true },
-  { label: "SMS илгээх", icon: Send, href: "#campaign" },
-  { label: "Харилцагчид", icon: Users, href: "#contacts", disabled: true },
-  { label: "Кампанит ажил", icon: MessageSquareText, href: "#campaigns", disabled: true },
-  { label: "Тайлан", icon: ChartNoAxesCombined, href: "#reports", disabled: true }
+  { key: "nav.dashboard", icon: LayoutDashboard, href: "#dashboard", active: true },
+  { key: "nav.send", icon: Send, href: "#campaign" },
+  { key: "nav.contacts", icon: Users, href: "#contacts", disabled: true },
+  { key: "nav.campaigns", icon: MessageSquareText, href: "#campaigns", disabled: true },
+  { key: "nav.reports", icon: ChartNoAxesCombined, href: "#reports", disabled: true }
 ];
 
 const formatMnt = (amount: number) =>
@@ -66,12 +67,12 @@ export default function Home() {
         </div>
 
         <div className="nav-section">
-          <span className="nav-caption">WORKSPACE</span>
+          <span className="nav-caption">{t("nav.workspace")}</span>
           <nav className="side-nav" aria-label="Үндсэн цэс">
-            {navigation.map(({ label, icon: Icon, href, active, disabled }) => (
+            {navigation.map(({ key, icon: Icon, href, active, disabled }) => (
               disabled ? (
                 <span key={label} className="nav-link nav-link-disabled" aria-disabled="true" title="Тун удахгүй">
-                  <Icon size={17} strokeWidth={1.8} /><span>{label}</span><span className="nav-coming">УДАХГҮЙ</span>
+                  <Icon size={17} strokeWidth={1.8} /><span>{label}</span><span className="nav-coming">{t("status.comingSoon")}</span>
                 </span>
               ) : (
                 <a key={label} href={href} className={active ? "nav-link active" : "nav-link"}>
@@ -84,11 +85,11 @@ export default function Home() {
         </div>
 
         <div className="nav-section">
-          <span className="nav-caption">ТАНЫ БҮРТГЭЛ</span>
+          <span className="nav-caption">{t("nav.account")}</span>
           <nav className="side-nav" aria-label="Бүртгэлийн цэс">
-            <a className="nav-link" href="#balance"><Wallet size={17} strokeWidth={1.8}/><span>Төлбөр ба багц</span></a>
-            <span className="nav-link nav-link-disabled" aria-disabled="true"><Settings2 size={17} strokeWidth={1.8}/><span>Тохиргоо</span><span className="nav-coming">УДАХГҮЙ</span></span>
-            <a className="nav-link" href="mailto:support@masssms.mn"><CircleHelp size={17} strokeWidth={1.8}/><span>Тусламжийн төв</span></a>
+            <a className="nav-link" href="#balance"><Wallet size={17} strokeWidth={1.8}/><span>{t("nav.billing")}</span></a>
+            <span className="nav-link nav-link-disabled" aria-disabled="true"><Settings2 size={17} strokeWidth={1.8}/><span>{t("nav.settings")}</span><span className="nav-coming">{t("status.comingSoon")}</span></span>
+            <a className="nav-link" href="mailto:support@masssms.mn"><CircleHelp size={17} strokeWidth={1.8}/><span>{t("nav.help")}</span></a>
           </nav>
         </div>
 
@@ -105,9 +106,9 @@ export default function Home() {
       <main className="main-area">
         <header className="topbar">
           <div className="mobile-brand"><span className="brand-symbol">m</span><span className="brand-word">mass<span>sms</span></span></div>
-          <div className="breadcrumb"><span>Workspace</span><span className="breadcrumb-separator">/</span><strong>Хянах самбар</strong></div>
+          <div className="breadcrumb"><span>Workspace</span><span className="breadcrumb-separator">/</span><strong>{t("dashboard.title")}</strong></div>
           <div className="topbar-actions">
-            <button className="icon-button" aria-label="Мэдэгдэл"><Bell size={18}/><i/></button>
+            <div className="locale-switch" role="group" aria-label="Language"><button type="button" aria-pressed={locale === "mn"} onClick={() => setLocale("mn")}>MN</button><button type="button" aria-pressed={locale === "en"} onClick={() => setLocale("en")}>EN</button></div><button className="icon-button" aria-label="Notifications"><Bell size={18}/><i/></button>
             <span className="topbar-divider"/>
             <button className="profile-button"><span className="profile-avatar">R</span><span className="profile-name">RAINY</span><ChevronDown size={14}/></button>
           </div>
@@ -117,30 +118,30 @@ export default function Home() {
           <section className="welcome-row">
             <div>
               <div className="eyebrow"><span className="eyebrow-dot"/> ТАВТАЙ МОРИЛ</div>
-              <h1>Өдрийн мэнд 👋</h1>
-              <p>Бизнесийн мессежүүдээ нэг дороос хялбар удирдаарай.</p>
+              <h1>{t("dashboard.greeting")} 👋</h1>
+              <p>{t("dashboard.subtitle")}</p>
             </div>
             <div className="date-chip"><Clock3 size={15}/> Таны ажлын орчин</div>
           </section>
 
           <section className="metrics-grid" aria-label="Үндсэн үзүүлэлтүүд">
             <article className="metric-card metric-balance" id="balance">
-              <div className="metric-heading"><span>Боломжит үлдэгдэл</span><span className="metric-icon"><Wallet size={17}/></span></div>
+              <div className="metric-heading"><span>{t("dashboard.balance")}</span><span className="metric-icon"><Wallet size={17}/></span></div>
               <div className="metric-value">₮0</div>
               <div className="metric-foot"><span className="metric-foot-icon"><Plus size={12}/></span> SMS кредитээ цэнэглэх</div>
             </article>
             <article className="metric-card">
-              <div className="metric-heading"><span>Илгээсэн SMS</span><span className="metric-icon"><Send size={17}/></span></div>
+              <div className="metric-heading"><span>{t("dashboard.sent")}</span><span className="metric-icon"><Send size={17}/></span></div>
               <div className="metric-value">—</div>
               <div className="metric-foot">Энэ сарын нийт илгээлт</div>
             </article>
             <article className="metric-card">
-              <div className="metric-heading"><span>Харилцагч</span><span className="metric-icon"><Users size={17}/></span></div>
+              <div className="metric-heading"><span>{t("dashboard.contacts")}</span><span className="metric-icon"><Users size={17}/></span></div>
               <div className="metric-value">—</div>
               <div className="metric-foot">Зөвшөөрөлтэй дугаар</div>
             </article>
             <article className="metric-card">
-              <div className="metric-heading"><span>Хүргэлтийн хувь</span><span className="metric-icon"><Activity size={17}/></span></div>
+              <div className="metric-heading"><span>{t("dashboard.delivery")}</span><span className="metric-icon"><Activity size={17}/></span></div>
               <div className="metric-value">—</div>
               <div className="metric-foot">Илгээлтийн дараа тооцно</div>
             </article>
@@ -149,14 +150,14 @@ export default function Home() {
           <div className="content-grid">
             <section className="panel composer-panel" id="campaign">
               <div className="panel-header">
-                <div><div className="section-kicker">ШИНЭ ИЛГЭЭЛТ</div><h2>SMS кампанит ажил</h2><p>Хүлээн авагч болон мессежээ оруулаад зардлаа урьдчилан тооцоолно.</p></div>
+                <div><div className="section-kicker">ШИНЭ ИЛГЭЭЛТ</div><h2>{t("campaign.title")}</h2><p>{t("campaign.subtitle")}</p></div>
                 <span className="panel-header-icon"><MessageSquareText size={19}/></span>
               </div>
 
               <div className="form-section">
                 <div className="field-heading">
-                  <label htmlFor="recipients">Хүлээн авагчийн дугаар</label>
-                  <span className="field-hint">Нэг мөрөнд нэг дугаар</span>
+                  <label htmlFor="recipients">{t("campaign.recipients")}</label>
+                  <span className="field-hint">{t("campaign.recipientsHint")}</span>
                 </div>
                 <textarea id="recipients" className="input-area recipient-input" value={numbers} onChange={e => setNumbers(e.target.value)} placeholder="99112233&#10;88112233&#10;95112233" spellCheck={false}/>
                 <div className="recipient-toolbar">
@@ -165,34 +166,34 @@ export default function Home() {
                     {estimate.invalidNumbers.length > 0 && <span className="count-invalid">{estimate.invalidNumbers.length} буруу</span>}
                     {estimate.duplicateCount > 0 && <span className="count-muted">{estimate.duplicateCount} давхардсан</span>}
                   </div>
-                  <label className="import-button"><ArrowDownToLine size={14}/><span>Файл импортлох</span><input type="file" accept=".csv,.txt,text/csv,text/plain" onChange={importFile} hidden/></label>
+                  <label className="import-button"><ArrowDownToLine size={14}/><span>{t("campaign.import")}</span><input type="file" accept=".csv,.txt,text/csv,text/plain" onChange={importFile} hidden/></label>
                 </div>
                 {fileName && <div className="file-chip"><FileText size={13}/>{fileName}<span>Импортолсон</span></div>}
               </div>
 
               <div className="form-section message-section">
-                <div className="field-heading"><label htmlFor="message">Мессежийн агуулга</label><span className="field-hint">{estimate.isUnicode ? "Кирилл / Unicode" : "Латин"}</span></div>
+                <div className="field-heading"><label htmlFor="message">{t("campaign.message")}</label><span className="field-hint">{estimate.isUnicode ? "Кирилл / Unicode" : "Латин"}</span></div>
                 <textarea id="message" className="input-area message-input" value={message} onChange={e => setMessage(e.target.value)} placeholder="Илгээх мессежээ энд бичнэ үү..."/>
                 <div className="message-meta"><span>{message.length} тэмдэгт</span><span>{estimate.parts} SMS хэсэг</span><span>Хэсэг тутам {estimate.charactersPerPart} тэмдэгт</span></div>
               </div>
 
-              <div className="compliance-note"><ShieldCheck size={17}/><p><strong>Хариуцлагатай илгээлт</strong><span>Зөвхөн SMS хүлээн авах зөвшөөрөл өгсөн дугааруудад илгээнэ. Татгалзсан дугааруудыг илгээлтээс хасна.</span></p></div>
+              <div className="compliance-note"><ShieldCheck size={17}/><p><strong>{t("campaign.compliance")}</strong><span>{t("campaign.complianceText")}</span></p></div>
 
               {estimate.invalidNumbers.length > 0 && <div className="validation-note" role="status">Буруу форматтай {estimate.invalidNumbers.length} дугаарыг зассаны дараа үргэлжлүүлнэ үү.</div>}
               {estimate.parts > 4 && <div className="validation-note" role="status">Нэг мессеж 4-өөс олон хэсэгтэй байна. Агуулгаа богиносгоно уу.</div>}
               {notice && <div className="validation-note" role="status">{notice}</div>}
 
               <div className="estimate-footer">
-                <div className="estimate-copy"><span>Нийт урьдчилсан төлбөр</span><strong>₮{formatMnt(estimated)}</strong><small>{estimate.validNumbers.length} дугаар × {estimate.parts} хэсэг × ₮{SMS_PRICE_PER_PART_MNT}</small></div>
-                <button className="primary-button" disabled={!canPrepare} onClick={() => setNotice("Кампанит ажил үүсгэх backend холболт бэлэн болмогц энэ үйлдэл идэвхжинэ.")}><Send size={15}/> Илгээлт бэлтгэх</button>
+                <div className="estimate-copy"><span>{t("campaign.estimate")}</span><strong>₮{formatMnt(estimated)}</strong><small>{estimate.validNumbers.length} дугаар × {estimate.parts} хэсэг × ₮{SMS_PRICE_PER_PART_MNT}</small></div>
+                <button className="primary-button" disabled={!canPrepare} onClick={() => setNotice("Кампанит ажил үүсгэх backend холболт бэлэн болмогц энэ үйлдэл идэвхжинэ.")}><Send size={15}/> {t("campaign.prepare")}</button>
               </div>
               <div className="composer-disclaimer">Одоогоор урьдчилсан тооцоолуур ажиллаж байна. Бодит илгээлт болон кредитийн баталгаажуулалт холбогдоогүй.</div>
             </section>
 
             <aside className="right-rail">
               <section className="panel price-panel">
-                <div className="rail-heading"><div><div className="section-kicker">ҮНИЙН МЭДЭЭЛЭЛ</div><h2>SMS тариф</h2></div><span className="rail-icon"><Zap size={17}/></span></div>
-                <div className="price-highlight"><span>Нэг SMS хэсгийн үнэ</span><strong>₮{formatMnt(SMS_PRICE_PER_PART_MNT)}</strong><small>Мессежийн нэг хэсэг тутамд ногдох хэрэглэгчийн үнэ.</small></div>
+                <div className="rail-heading"><div><div className="section-kicker">ҮНИЙН МЭДЭЭЛЭЛ</div><h2>{t("pricing.title")}</h2></div><span className="rail-icon"><Zap size={17}/></span></div>
+                <div className="price-highlight"><span>{t("pricing.unit")}</span><strong>₮{formatMnt(SMS_PRICE_PER_PART_MNT)}</strong><small>{t("pricing.estimateOnly")}</small></div>
                 <div className="price-breakdown"><div><span>Хүлээн авагч</span><strong>{estimate.validNumbers.length}</strong></div><div><span>Нэг дугаарт ногдох хэсэг</span><strong>{estimate.parts}</strong></div><div><span>Нийт SMS хэсэг</span><strong>{totalParts}</strong></div></div>
                 <div className="price-total"><span>Урьдчилсан дүн</span><strong>₮{formatMnt(estimated)}</strong></div>
               </section>
