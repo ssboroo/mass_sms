@@ -1,76 +1,212 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import { estimateSms } from "@/lib/sms";
 import { SMS_PRICE_PER_PART_MNT } from "@/lib/pricing";
-import { Activity, ArrowUpRight, BarChart3, Bell, ChevronDown, CircleHelp, FileText, LayoutDashboard, MessageSquareText, Plus, Send, Settings, ShieldCheck, Users, Wallet, Zap } from "lucide-react";
+import {
+  Activity, ArrowDownToLine, ArrowRight, Bell, BookOpen, ChartNoAxesCombined,
+  Check, ChevronDown, CircleHelp, Clock3, FileText, LayoutDashboard,
+  MessageSquareText, Plus, Send, Settings2, ShieldCheck, Smartphone,
+  Users, Wallet, Zap
+} from "lucide-react";
 
-const nav = [
-  { label: "Хянах самбар", icon: LayoutDashboard, active: true },
-  { label: "SMS илгээх", icon: Send },
-  { label: "Харилцагчид", icon: Users },
-  { label: "Кампанит ажил", icon: MessageSquareText },
-  { label: "Тайлан", icon: BarChart3 }
+const navigation = [
+  { label: "Хянах самбар", icon: LayoutDashboard, href: "#dashboard", active: true },
+  { label: "SMS илгээх", icon: Send, href: "#campaign" },
+  { label: "Харилцагчид", icon: Users, href: "#contacts" },
+  { label: "Кампанит ажил", icon: MessageSquareText, href: "#campaigns" },
+  { label: "Тайлан", icon: ChartNoAxesCombined, href: "#reports" }
 ];
+
+const formatMnt = (amount: number) =>
+  new Intl.NumberFormat("mn-MN", { maximumFractionDigits: 0 }).format(amount);
 
 export default function Home() {
   const [numbers, setNumbers] = useState("99112233\n88112233\n95112233");
   const [message, setMessage] = useState("Сайн байна уу? Манай шинэ үйлчилгээний мэдээллийг хүргэж байна.");
   const [notice, setNotice] = useState("");
-  const estimate = useMemo(() => estimateSms(numbers, message), [numbers, message]);
-  const valid = estimate.validNumbers;
-  const invalid = estimate.invalidNumbers.length;
-  const isCyrillic = estimate.isUnicode;
-  const parts = estimate.parts;
-  const estimated = valid.length * parts * SMS_PRICE_PER_PART_MNT;
+  const [fileName, setFileName] = useState("");
 
-  function importFile(file?: File) {
+  const estimate = useMemo(() => estimateSms(numbers, message), [numbers, message]);
+  const totalParts = estimate.validNumbers.length * estimate.parts;
+  const estimated = totalParts * SMS_PRICE_PER_PART_MNT;
+  const canPrepare = estimate.validNumbers.length > 0 && message.trim().length > 0 &&
+    estimate.invalidNumbers.length === 0 && estimate.parts <= 4;
+
+  function importFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
     if (!file) return;
+    if (!/\.(csv|txt)$/i.test(file.name)) {
+      setNotice("Зөвхөн CSV эсвэл TXT файл импортлох боломжтой.");
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = () => setNumbers(String(reader.result ?? "").replace(/[^0-9+\n,;\s-]/g, ""));
+    reader.onload = () => {
+      setNumbers(String(reader.result ?? ""));
+      setFileName(file.name);
+      setNotice("");
+    };
+    reader.onerror = () => setNotice("Файлыг уншихад алдаа гарлаа. Дахин оролдоно уу.");
     reader.readAsText(file);
+    event.target.value = "";
   }
 
-  return <div className="shell">
-    <aside className="sidebar">
-      <div className="brand"><span className="brand-mark">M</span> mass<span style={{color:"#246bfe"}}>sms</span></div>
-      <div><div className="nav-label">WORKSPACE</div><nav className="nav">{nav.map(({label,icon:Icon,active})=><a key={label} className={active?"active":""} href="#"><Icon size={16}/>{label}</a>)}</nav></div>
-      <div><div className="nav-label">ТОХИРГОО</div><nav className="nav"><a href="#"><Wallet size={16}/>Төлбөр ба багц</a><a href="#"><Settings size={16}/>Тохиргоо</a><a href="#"><CircleHelp size={16}/>Тусламж</a></nav></div>
-      <div className="sidebar-bottom"><div style={{fontSize:11,fontWeight:800,marginBottom:6}}>Тусламж хэрэгтэй юу?</div><div className="helper">Манай баг танд SMS үйлчилгээг эхлүүлэхэд тусална.</div><a href="mailto:support@masssms.mn" style={{fontSize:11,color:"#246bfe",fontWeight:800,textDecoration:"none"}}>Холбоо барих →</a></div>
-    </aside>
-    <main className="main">
-      <div className="topbar"><div className="crumb">Workspace <span style={{padding:"0 7px"}}>/</span> <b>Хянах самбар</b></div><div className="row"><Bell size={17} color="#8492a7"/><div className="user"><span className="avatar">R</span> RAINY <ChevronDown size={13}/></div></div></div>
-      <header><h1 className="page-title">Өдрийн мэнд 👋</h1><p className="sub">SMS кампанит ажлаа нэг дороос удирдаарай.</p></header>
-      <section className="stats">
-        <div className="card balance"><div className="stat-top"><span>Боломжит үлдэгдэл</span><Wallet size={17}/></div><div className="stat-value">₮0</div><div className="stat-note">SMS илгээх кредит</div></div>
-        <div className="card"><div className="stat-top"><span>Илгээсэн SMS</span><Send size={16}/></div><div className="stat-value">—</div><div className="stat-note">Энэ сарын нийт</div></div>
-        <div className="card"><div className="stat-top"><span>Харилцагч</span><Users size={16}/></div><div className="stat-value">—</div><div className="stat-note">Зөвшөөрөлтэй дугаар</div></div>
-        <div className="card"><div className="stat-top"><span>Хүргэлтийн хувь</span><Activity size={16}/></div><div className="stat-value">—</div><div className="stat-note">Бодит илгээлтийн дараа</div></div>
-      </section>
-      <div className="grid-main">
-        <section className="card">
-          <div className="card-head"><div><h2 className="card-title">Шинэ SMS кампанит ажил</h2><p className="helper">Олон дугаарт нэг дор мессеж илгээх</p></div><span className="pill">ШИНЭ КАМПАНИТ АЖИЛ</span></div>
-          <label className="field-label">Хүлээн авагчийн дугаар</label>
-          <textarea className="field" value={numbers} onChange={e=>setNumbers(e.target.value)} placeholder="99112233, 88112233..." />
-          <div className="row" style={{justifyContent:"space-between",marginTop:8}}><span className="helper">{valid.length} зөв дугаар · {invalid} шалгах шаардлагатай</span><label className="secondary" style={{cursor:"pointer"}}><input type="file" accept=".csv,.txt" hidden onChange={e=>importFile(e.target.files?.[0])}/><span><FileText size={13} style={{verticalAlign:"middle",marginRight:5}}/>CSV импортлох</span></label></div>
-          <label className="field-label">Мессежийн агуулга</label>
-          <textarea className="field" value={message} onChange={e=>setMessage(e.target.value)} placeholder="Илгээх мессежээ бичнэ үү..."/>
-          <div className="row" style={{justifyContent:"space-between",marginTop:8}}><span className="helper">{message.length} тэмдэгт · {parts} SMS хэсэг · {isCyrillic?"Кирилл":"Латин"}</span><span className="helper">Дээд тал нь 4 хэсэг</span></div>
-          <div className="notice"><ShieldCheck size={14} style={{verticalAlign:"middle",marginRight:6}}/>Зөвхөн SMS хүлээн авах зөвшөөрөл өгсөн хэрэглэгчдэд илгээнэ. Татгалзсан (STOP) дугаарууд автоматаар хасагдана. Одоогоор энэ дэлгэц урьдчилсан тооцоолол хийж байна.</div>
-          <div className="row" style={{justifyContent:"space-between",marginTop:17}}><div><div style={{fontSize:10,color:"#8a98ad"}}>Урьдчилсан төлбөр</div><div style={{fontSize:21,fontWeight:800}}>₮{estimated.toLocaleString("en-US")}</div></div><button className="primary" disabled={!valid.length||!message.trim()||invalid>0||parts>4} onClick={()=>setNotice("Кампанит ажил илгээх backend болон төлбөрийн баталгаажуулалт холбогдсоны дараа идэвхжинэ.")}><Send size={14} style={{verticalAlign:"middle",marginRight:7}}/>Илгээлт бэлтгэх</button></div>
-          {notice&&<div className="notice" role="status">{notice}</div>}
-        </section>
-        <div style={{display:"grid",gap:16,alignContent:"start"}}>
-          <section className="card"><div className="card-head"><h2 className="card-title">Холболтын төлөв</h2><span className="pill">INTEGRATIONS</span></div><div className="activity">
-            <div className="activity-item"><span><span className="dot" style={{background:"#e8a23a"}}/>SMS илгээлтийн систем</span><b className="muted">Түлхүүр хүлээж байна</b></div>
-            <div className="activity-item"><span><span className="dot" style={{background:"#e8a23a"}}/>Төлбөрийн систем</span><b className="muted">Түлхүүр хүлээж байна</b></div>
-            <div className="activity-item"><span><span className="dot" style={{background:"#e8a23a"}}/>Өгөгдлийн сан</span><b className="muted">Тохируулах</b></div>
-          </div></section>
-          <section className="card"><div className="card-head"><h2 className="card-title">SMS тооцоолуур</h2><Zap size={17} color="#246bfe"/></div><div style={{fontSize:12,color:"#61718a",lineHeight:1.8}}>Кирилл, эможи агуулсан мессеж 65 тэмдэгтээр, латин мессеж 155 тэмдэгтээр хэсэгт хуваагдана.</div><div style={{display:"flex",justifyContent:"space-between",paddingTop:14,marginTop:14,borderTop:"1px solid #edf0f5",fontSize:11}}><span className="muted">Одоогийн тооцоо</span><b>{valid.length} × {parts} × ₮{SMS_PRICE_PER_PART_MNT}</b></div></section>
-          <section className="card"><div className="card-head"><h2 className="card-title">Түргэн үйлдэл</h2><Plus size={16}/></div><div className="activity"><div className="activity-item"><span>Харилцагч импортлох</span><ArrowUpRight size={14}/></div><div className="activity-item"><span>SMS багц цэнэглэх</span><ArrowUpRight size={14}/></div><div className="activity-item"><span>Илгээлтийн тайлан</span><ArrowUpRight size={14}/></div></div></section>
+  return (
+    <div className="app-shell" id="dashboard">
+      <aside className="sidebar">
+        <a className="brand" href="#dashboard" aria-label="Mass SMS нүүр">
+          <span className="brand-symbol">m</span>
+          <span className="brand-word">mass<span>sms</span></span>
+        </a>
+
+        <div className="workspace-switcher">
+          <span className="workspace-avatar">R</span>
+          <span className="workspace-copy"><strong>RAINY Workspace</strong><small>Үндсэн орчин</small></span>
+          <ChevronDown size={15} />
         </div>
-      </div>
-      <div className="footer">© 2026 Mass SMS · Монголд зориулсан SMS платформ</div>
-    </main>
-  </div>;
+
+        <div className="nav-section">
+          <span className="nav-caption">WORKSPACE</span>
+          <nav className="side-nav" aria-label="Үндсэн цэс">
+            {navigation.map(({ label, icon: Icon, href, active }) => (
+              <a key={label} href={href} className={active ? "nav-link active" : "nav-link"}>
+                <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
+                {label === "SMS илгээх" && <span className="nav-shortcut">NEW</span>}
+              </a>
+            ))}
+          </nav>
+        </div>
+
+        <div className="nav-section">
+          <span className="nav-caption">ТАНЫ БҮРТГЭЛ</span>
+          <nav className="side-nav" aria-label="Бүртгэлийн цэс">
+            <a className="nav-link" href="#balance"><Wallet size={17} strokeWidth={1.8}/><span>Төлбөр ба багц</span></a>
+            <a className="nav-link" href="#settings"><Settings2 size={17} strokeWidth={1.8}/><span>Тохиргоо</span></a>
+            <a className="nav-link" href="#help"><CircleHelp size={17} strokeWidth={1.8}/><span>Тусламжийн төв</span></a>
+          </nav>
+        </div>
+
+        <div className="sidebar-spacer" />
+        <div className="support-card" id="help">
+          <span className="support-icon"><BookOpen size={17}/></span>
+          <strong>Тусламж хэрэгтэй юу?</strong>
+          <p>SMS үйлчилгээгээ эхлүүлэхэд манай баг тусална.</p>
+          <a href="mailto:support@masssms.mn">Бидэнтэй холбогдох <ArrowRight size={13}/></a>
+        </div>
+        <div className="sidebar-footer"><span className="online-indicator"/> Систем хэвийн ажиллаж байна</div>
+      </aside>
+
+      <main className="main-area">
+        <header className="topbar">
+          <div className="mobile-brand"><span className="brand-symbol">m</span><span className="brand-word">mass<span>sms</span></span></div>
+          <div className="breadcrumb"><span>Workspace</span><span className="breadcrumb-separator">/</span><strong>Хянах самбар</strong></div>
+          <div className="topbar-actions">
+            <button className="icon-button" aria-label="Мэдэгдэл"><Bell size={18}/><i/></button>
+            <span className="topbar-divider"/>
+            <button className="profile-button"><span className="profile-avatar">R</span><span className="profile-name">RAINY</span><ChevronDown size={14}/></button>
+          </div>
+        </header>
+
+        <div className="page-content">
+          <section className="welcome-row">
+            <div>
+              <div className="eyebrow"><span className="eyebrow-dot"/> ТАВТАЙ МОРИЛ</div>
+              <h1>Өдрийн мэнд 👋</h1>
+              <p>Бизнесийн мессежүүдээ нэг дороос хялбар удирдаарай.</p>
+            </div>
+            <div className="date-chip"><Clock3 size={15}/> Таны ажлын орчин</div>
+          </section>
+
+          <section className="metrics-grid" aria-label="Үндсэн үзүүлэлтүүд">
+            <article className="metric-card metric-balance" id="balance">
+              <div className="metric-heading"><span>Боломжит үлдэгдэл</span><span className="metric-icon"><Wallet size={17}/></span></div>
+              <div className="metric-value">₮0</div>
+              <div className="metric-foot"><span className="metric-foot-icon"><Plus size={12}/></span> SMS кредитээ цэнэглэх</div>
+            </article>
+            <article className="metric-card">
+              <div className="metric-heading"><span>Илгээсэн SMS</span><span className="metric-icon"><Send size={17}/></span></div>
+              <div className="metric-value">—</div>
+              <div className="metric-foot">Энэ сарын нийт илгээлт</div>
+            </article>
+            <article className="metric-card">
+              <div className="metric-heading"><span>Харилцагч</span><span className="metric-icon"><Users size={17}/></span></div>
+              <div className="metric-value">—</div>
+              <div className="metric-foot">Зөвшөөрөлтэй дугаар</div>
+            </article>
+            <article className="metric-card">
+              <div className="metric-heading"><span>Хүргэлтийн хувь</span><span className="metric-icon"><Activity size={17}/></span></div>
+              <div className="metric-value">—</div>
+              <div className="metric-foot">Илгээлтийн дараа тооцно</div>
+            </article>
+          </section>
+
+          <div className="content-grid">
+            <section className="panel composer-panel" id="campaign">
+              <div className="panel-header">
+                <div><div className="section-kicker">ШИНЭ ИЛГЭЭЛТ</div><h2>SMS кампанит ажил</h2><p>Хүлээн авагч болон мессежээ оруулаад зардлаа урьдчилан тооцоолно.</p></div>
+                <span className="panel-header-icon"><MessageSquareText size={19}/></span>
+              </div>
+
+              <div className="form-section">
+                <div className="field-heading">
+                  <label htmlFor="recipients">Хүлээн авагчийн дугаар</label>
+                  <span className="field-hint">Нэг мөрөнд нэг дугаар</span>
+                </div>
+                <textarea id="recipients" className="input-area recipient-input" value={numbers} onChange={e => setNumbers(e.target.value)} placeholder="99112233&#10;88112233&#10;95112233" spellCheck={false}/>
+                <div className="recipient-toolbar">
+                  <div className="recipient-counts">
+                    <span className="count-valid"><Check size={13}/>{estimate.validNumbers.length} зөв</span>
+                    {estimate.invalidNumbers.length > 0 && <span className="count-invalid">{estimate.invalidNumbers.length} буруу</span>}
+                    {estimate.duplicateCount > 0 && <span className="count-muted">{estimate.duplicateCount} давхардсан</span>}
+                  </div>
+                  <label className="import-button"><ArrowDownToLine size={14}/><span>Файл импортлох</span><input type="file" accept=".csv,.txt,text/csv,text/plain" onChange={importFile} hidden/></label>
+                </div>
+                {fileName && <div className="file-chip"><FileText size={13}/>{fileName}<span>Импортолсон</span></div>}
+              </div>
+
+              <div className="form-section message-section">
+                <div className="field-heading"><label htmlFor="message">Мессежийн агуулга</label><span className="field-hint">{estimate.isUnicode ? "Кирилл / Unicode" : "Латин"}</span></div>
+                <textarea id="message" className="input-area message-input" value={message} onChange={e => setMessage(e.target.value)} placeholder="Илгээх мессежээ энд бичнэ үү..."/>
+                <div className="message-meta"><span>{message.length} тэмдэгт</span><span>{estimate.parts} SMS хэсэг</span><span>Хэсэг тутам {estimate.charactersPerPart} тэмдэгт</span></div>
+              </div>
+
+              <div className="compliance-note"><ShieldCheck size={17}/><p><strong>Хариуцлагатай илгээлт</strong><span>Зөвхөн SMS хүлээн авах зөвшөөрөл өгсөн дугааруудад илгээнэ. Татгалзсан дугааруудыг илгээлтээс хасна.</span></p></div>
+
+              {estimate.invalidNumbers.length > 0 && <div className="validation-note" role="status">Буруу форматтай {estimate.invalidNumbers.length} дугаарыг зассаны дараа үргэлжлүүлнэ үү.</div>}
+              {estimate.parts > 4 && <div className="validation-note" role="status">Нэг мессеж 4-өөс олон хэсэгтэй байна. Агуулгаа богиносгоно уу.</div>}
+              {notice && <div className="validation-note" role="status">{notice}</div>}
+
+              <div className="estimate-footer">
+                <div className="estimate-copy"><span>Нийт урьдчилсан төлбөр</span><strong>₮{formatMnt(estimated)}</strong><small>{estimate.validNumbers.length} дугаар × {estimate.parts} хэсэг × ₮{SMS_PRICE_PER_PART_MNT}</small></div>
+                <button className="primary-button" disabled={!canPrepare} onClick={() => setNotice("Кампанит ажил үүсгэх backend холболт бэлэн болмогц энэ үйлдэл идэвхжинэ.")}><Send size={15}/> Илгээлт бэлтгэх</button>
+              </div>
+              <div className="composer-disclaimer">Одоогоор урьдчилсан тооцоолуур ажиллаж байна. Бодит илгээлт болон кредитийн баталгаажуулалт холбогдоогүй.</div>
+            </section>
+
+            <aside className="right-rail">
+              <section className="panel price-panel">
+                <div className="rail-heading"><div><div className="section-kicker">ҮНИЙН МЭДЭЭЛЭЛ</div><h2>SMS тариф</h2></div><span className="rail-icon"><Zap size={17}/></span></div>
+                <div className="price-highlight"><span>Нэг SMS хэсгийн үнэ</span><strong>₮{formatMnt(SMS_PRICE_PER_PART_MNT)}</strong><small>НӨАТ болон бусад шимтгэл тусдаа тооцогдох эсэхийг тохируулна.</small></div>
+                <div className="price-breakdown"><div><span>Хүлээн авагч</span><strong>{estimate.validNumbers.length}</strong></div><div><span>Нэг дугаарт ногдох хэсэг</span><strong>{estimate.parts}</strong></div><div><span>Нийт SMS хэсэг</span><strong>{totalParts}</strong></div></div>
+                <div className="price-total"><span>Урьдчилсан дүн</span><strong>₮{formatMnt(estimated)}</strong></div>
+              </section>
+
+              <section className="panel connection-panel">
+                <div className="rail-heading"><div><div className="section-kicker">ҮЙЛЧИЛГЭЭНИЙ ТӨЛӨВ</div><h2>Системийн холболт</h2></div><span className="rail-icon"><Smartphone size={17}/></span></div>
+                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>SMS үйлчилгээ</span><span className="status-label">Тохируулах</span></div>
+                <div className="connection-row"><span className="connection-name"><i className="status-dot status-waiting"/>Төлбөрийн үйлчилгээ</span><span className="status-label">Тохируулах</span></div>
+                <div className="connection-row"><span className="connection-name"><i className="status-dot status-ready"/>Өгөгдлийн сан</span><span className="status-label">Холбогдсон</span></div>
+              </section>
+
+              <section className="quickstart-card">
+                <div className="quickstart-icon"><Zap size={17}/></div><div><strong>Эхлэхэд бэлэн үү?</strong><p>Харилцагчдаа импортлоод анхны SMS кампанит ажлаа бэлдээрэй.</p><a href="#campaign">Кампанит ажил эхлүүлэх <ArrowRight size={13}/></a></div>
+              </section>
+            </aside>
+          </div>
+
+          <footer className="main-footer"><span>© 2026 MASS SMS</span><span>Монголын бизнесүүдэд зориулсан мессежийн платформ</span><a href="mailto:support@masssms.mn">Тусламж авах</a></footer>
+        </div>
+      </main>
+    </div>
+  );
 }
