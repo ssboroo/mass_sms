@@ -26,7 +26,7 @@ export default function Home() {
   function importFile(file?: File) {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setNumbers(String(reader.result ?? "").replace(/[^0-9+\\n,;\\s-]/g, ""));
+    reader.onload = () => setNumbers(String(reader.result ?? "").replace(/[^0-9+\n,;\s-]/g, ""));
     reader.readAsText(file);
   }
 
