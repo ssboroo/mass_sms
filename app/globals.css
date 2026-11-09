@@ -560,3 +560,6 @@ a { color: inherit; }
 .admin-security{display:flex;align-items:center;gap:7px;margin-top:15px;color:#8492a5;font-size:10px}
 @media(max-width:1000px){.admin-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-panel-head{align-items:flex-start;flex-direction:column}.admin-panel-head form{width:100%}.admin-panel-head form input{flex:1}}
 @media(max-width:600px){.admin-content{width:calc(100% - 28px);padding-top:24px}.admin-top{padding:0 14px}.admin-chip{display:none}.admin-heading{align-items:flex-start;flex-direction:column;gap:15px}.admin-heading h1{font-size:23px}.admin-kpis{gap:8px}.admin-kpis article{padding:13px;min-height:112px}.admin-kpis article>b{font-size:22px}.admin-payment-panel{align-items:flex-start;flex-direction:column}.admin-payment-stats{gap:17px}.account-card{padding:28px 22px}}
+
+.pro-account-link{width:30px;height:30px;display:grid;place-items:center;border:1px solid #e2e8f0;border-radius:8px;background:#fff;color:#64748b;cursor:pointer}
+.pro-shell[data-theme="dark"] .pro-account-link{border-color:#34465f;background:#17263c;color:#e5edf8}
