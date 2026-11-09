@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserStatus {
+enum UserRole {\n  USER\n  ADMIN\n}\n\nenum UserStatus {
   PENDING
   ACTIVE
   SUSPENDED
@@ -61,12 +61,12 @@ enum ConsentSource {
 
 model User {
   id                  String        @id @default(cuid())
-  email               String        @unique
+  email               String?       @unique
   phone               String?       @unique
   passwordHash        String
   fullName            String?
   organizationName    String?
-  status              UserStatus    @default(PENDING)
+  status              UserStatus    @default(PENDING)\n  role                UserRole      @default(USER)
   emailVerifiedAt     DateTime?
   phoneVerifiedAt     DateTime?
   createdAt           DateTime      @default(now())
@@ -112,7 +112,7 @@ model ApiToken {
 model CreditAccount {
   id             String        @id @default(cuid())
   userId         String        @unique
-  balance        BigInt        @default(0)
+  balance        BigInt        @default(0)\n  packageCode    String        @default("STARTER")\n  packageCredits BigInt        @default(0)
   currency       String        @default("MNT")
   updatedAt      DateTime      @updatedAt
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
