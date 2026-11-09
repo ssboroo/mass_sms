@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Business SMS campaigns, consent-based contacts, delivery reporting and credit management for Mongolia.",
   applicationName: "MASS SMS",
   manifest: "/manifest.webmanifest",
-  icons: { icon: "/mass-sms-mark.svg", shortcut: "/mass-sms-mark.svg" },
+  icons: { icon: "/mass-sms-mark.svg", shortcut: "/mass-sms-mark.svg", apple: "/apple-icon.png" },
   themeColor: "#2563eb",
 };
 
